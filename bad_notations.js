@@ -351,7 +351,7 @@ function abbrevN(n, func, config) {
     config[i] = config[i] ?? defaults[i];
   };
   if (config.decimals < 0 || (isPrecision && config.decimals < 3)) {
-    throw new RangeError("[BadNotations] 
+    throw new RangeError("[BadNotations] config.decimals is not in range")
   }
   if (n.eq("Infinity")) { return "Infinity"; }
   else if (n.eq("-Infinity")) { return "-Infinity"; }
