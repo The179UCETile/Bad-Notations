@@ -1,4 +1,4 @@
-var BadNotations = function () {
+var BadNotations = (function () {
   
 function gbi(illion) {
   const pref = {
@@ -416,4 +416,4 @@ return {
   }
 }
 
-}
+})()
