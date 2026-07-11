@@ -108,7 +108,7 @@ function dn(illion, c = false) {
     return arr.join("-");
   }
 }
-function vss(illion, c = false) {
+function vsn(illion, c = false) {
   const r = ["K Mil Bil Til Qail Qill Sxil Spil Oil Nil Dec Undec", " Un Bil Till Qail Qiil Sxil Spil Oil Nil", " Dec Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -123,15 +123,15 @@ function vss(illion, c = false) {
     for (let i = l; i >= 0; i--) {
       let j = i * 3;
       if (i >= 1) {
-        s += rnd(j, 1) ? `${vss(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
+        s += rnd(j, 1) ? `${vsn(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
       } else {
-        s += vss(illion.mod("1e3"), 1);
+        s += vsn(illion.mod("1e3"), 1);
       }
     };
     return s;
   }
 }
-function nvss(illion, c = false) {
+function nvsn(illion, c = false) {
   const r = ["K M B T Qua Qit Sx Sp O No Dc Undc", " Un B Till Qua Qiil Sx Sp O No", " Dc Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -146,9 +146,9 @@ function nvss(illion, c = false) {
     for (let i = l; i >= 0; i--) {
       let j = i * 3;
       if (i >= 1) {
-        s += rnd(j, 1) ? `${nvss(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
+        s += rnd(j, 1) ? `${nvsn(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
       } else {
-        s += nvss(illion.mod("1e3"), 1);
+        s += nvsn(illion.mod("1e3"), 1);
       }
     };
     return s;
@@ -251,7 +251,24 @@ function cs(illion, c = false) {
     } else if (t6.lt("1e3")) {
       return `${r[20][rnd("2", 0, t6)]}${getT6(t6.mod("100"))}`
     } else {
-      return x(getT6, (h) => { r[21][h.toNumber()] }, "§", t6);
+      const s6 = [];
+      let l6 = t6.log10().div("3").floor(), tier7ill = l6;
+      for (let i6 = 0; i6 < (l6.gte("1e9") ? 1 : l6.gte("1e3") ? 2 : l6.gte("100") ? 6 : l6.add("1").toNumber()); i6++) {
+        let j6 = tier7ill.mul("3");
+        let pref6 = r[21][tier7ill.toNumber()];
+        if (tier7ill.gte("1")) {
+          if (rnd(j6, 1, t6) != 0) {
+            s6.push(`${getT6(td(rnd(j6, 1, t6) == 1 ? 0 : rnd(j6, 1, t6)))}${pref6}`);
+          }
+        } else {
+          let st5 = getT6(td(rnd("0", 1, t6)));
+          if (st5 !== "") {
+            s6.push(st5);
+          }
+        };
+        tier7ill = tier7ill.sub("1");
+      };
+      return s6.join("§");
     }
   }
   function getT5(t5) {
@@ -398,10 +415,10 @@ return {
     format: fmt(ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})
   },
   VectorStandard: {
-    format: fmt(vss, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
+    format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
   },
   NewVectorStandard: {
-    format: fmt(nvss, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
+    format: fmt(nvsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
   },
   Ultimer: {
     format: fmt(un, {separator: " ", max: "1e3e3e6"})
