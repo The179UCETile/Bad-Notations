@@ -319,10 +319,10 @@ function cs(illion, c = false) {
       let pref = getT2(tier2ill);
       if (tier2ill.gte("1")) {
         if (rnd(j, 1) != 0) {
-          s.push(`${ss(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
+          s.push(`${cs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
         }
       } else {
-        let st = ss(td(rnd("0", 1)), 1);
+        let st = cs(td(rnd("0", 1)), 1);
         if (st !== "") {
           s.push(st);
         }
