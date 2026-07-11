@@ -350,7 +350,7 @@ function abbrevN(n, func, config) {
   for (let i in defaults) {
     config[i] = config[i] ?? defaults[i];
   };
-  if (config.decimals < 0 || (isPrecision && config.decimals < 3)) {
+  if (config.decimals < 0 || (config.isPrecision && config.decimals < 3)) {
     throw new RangeError("[BadNotations] config.decimals is not in range")
   }
   if (n.eq("Infinity")) { return "Infinity"; }
