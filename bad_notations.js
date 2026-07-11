@@ -383,6 +383,7 @@ function abbrevN(n, func, config) {
 }
 function fmt(f, df) {
   return function(num, config) {
+    if (typeof config === "undefined") return abbrevN(num, f, df);
     for (let i in df) {
       config[i] = config[i] ?? defaults[i];
     };
