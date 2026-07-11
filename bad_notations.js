@@ -385,7 +385,7 @@ function fmt(f, df) {
   return function(num, config) {
     if (typeof config === "undefined") return abbrevN(num, f, df);
     for (let i in df) {
-      config[i] = config[i] ?? defaults[i];
+      config[i] = config[i] ?? df[i];
     };
     return abbrevN(num, f, config);
   }
