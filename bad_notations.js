@@ -42,7 +42,7 @@ function gbiAbbreviate(n) {
   } else if (n.gte("1") && n.lte("1e3")) {
     return mantissa.toPrecision(4)
   } else {
-    return `${mantissa.toPrecision(4)}${getPrefix(n.log10().div("3").floor().sub("1").toNumber())}`
+    return `${mantissa.toPrecision(4)}${gbi(n.log10().div("3").floor().sub("1").toNumber())}`
   }
 }
 function ossn(illion) {
