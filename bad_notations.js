@@ -33,6 +33,9 @@ function gbiAbbreviate(n) {
   if (Decimal.isNaN(n)) return "NaN";
   if (n.eq("-Infinity")) return "-Infinity";
   if (n.eq("Infinity")) return "Infinity";
+  if (n.lt("0")) {
+    return `-${gbiAbbreviate(n.neg())}`
+  }
   let mantissa = new Decimal("10").pow(n.log10().mod("3", true));
   let mantissa2 = new Decimal("10").pow(n.log10().mod("1", true));
   if (n.lte("1e-12") || n.gte("1e3003")) {
@@ -44,6 +47,27 @@ function gbiAbbreviate(n) {
   } else {
     return `${mantissa.toPrecision(4)}${gbi(n.log10().div("3").floor().sub("1").toNumber())}`
   }
+}
+function ptsprAbbreviate(n) {
+  const r = "T U U+ U++ A A+ A++ C C+ C++ S S+ S++ O O+ O++ N N+ N++ D D+ D++ L L+ L++ OP OP+ OP++ OP* OP** OP^ OP^^ i".split(" ");
+  if (Decimal.isNaN(n)) return "NaN";
+  if (n.eq("-Infinity")) return "-Infinity";
+  if (n.eq("Infinity")) return "Infinity";
+  if (n.lt("0")) {
+    return `-${ptsprAbbreviate(n.neg())}`
+  };
+  if (n.lt("1e12")) {
+    let mantissa = n.div(new Decimal("1e3").pow(n.log10().div("3").floor()));
+    return `${mantissa.toPrecision(4)}${n.gte("1e3") ? "kMB"[n.log10().div("3").floor().toNumber()] : ""}`
+  } else if (n.lt("1e204")) {
+    let mantissa = n.div("1e12").div(new Decimal("1e6").pow(n.div("1e12").log10().div("6").floor()));
+    return `${mantissa.gte("1e3") ? mantissa.toNumber().toLocaleString("en-US") : mantissa.toPrecision(4)}${n.gte("1e3") ? r[n.div("1e12").log10().div("6").floor().toNumber()]}`
+  } else if (n.lt("1e213")) {
+    let mantissa = n.div("1e204");
+    return `${mantissa.gte("1e3") ? mantissa.toNumber().toLocaleString("en-US") : mantissa.toPrecision(4)}i`
+  } else {
+    return formatSci(n, 2);
+  }
 }
 function ossn(illion) {
   const r = ["K,M,B,T,Qa,Qi,Sx,Sp,Oc,No", ",U,D,T,Q,Qi,S,Sp,O,N", ",De,Vi,Ti,Qg,Qqg,Sag,Stg,Otg,Nag", ",Cen,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",C,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",,Du,Tre,Qua,Qui,Sx,Sep,Oct,Non", ",Mi,Mc,Na,Pic,Fem,Att,Zp,Yc,Xo,Vc,Me,Duec,Trec,Tetrec,Pentec,Hexec,Heptec,Octec,Ennec,Icos,Meicos,Dueicos,Trioicos,Tetreicos,Penteicos,Hexeicos,Hepteicos,Octeicos,Enneicos,Triacont,Metriacont,Duetriacont,Triotriacont,Tetretriacont,Pentetriacont,Hexetriacont,Heptetriacont,Octetriacont,Ennetriacont,Tetracont,Metetracont,Duetetracont,Triotetracont,Tetretetracont,Pentetetracont,Hexetetracont,Heptetetracont,Octetetracont,Ennetetracont,Pentacont,Mepentacont,Duepentacont,Triopentacont,Tetrepentacont,Pentepentacont,Hexepentacont,Heptepentacont,Octepentacont,Ennepentacont,Hexacont,Mehexacont,Duehexacont,Triohexacont,Tetrehexacont,Pentehexacont,Hexehexacont,Heptehexacont,Octehexacont,Ennehexacont,Heptacont,Meheptacont,Dueheptacont,Trioheptacont,Tetreheptacont,Penteheptacont,Hexeheptacont,Hepteheptacont,Octeheptacont,Enneheptacont,Octacont,Meoctacont,Dueoctacont,Triooctacont,Tetreoctacont,Penteoctacont,Hexeoctacont,Hepteoctacont,Octeoctacont,Enneoctacont,Ennacont,Meennacont,Dueennacont,Trioennacont,Tetreennacont,Penteennacont,Hexeennacont,Hepteennacont,Octeennacont,Enneennacont,Hect,Mehect,Duehect,Triohect"].map(a => a.split(","));
@@ -409,7 +433,7 @@ function fmt(f, df) {
 }
 return {
   GrandButtonIncrementalStandard: {
-    format: function (input) { return gbiAbbreviate(input) }
+    format: gbiAbbreviate(input)
   },
   True179ucStandard: {
     format: fmt(_179uc, {max: "1e60003"})
@@ -434,6 +458,9 @@ return {
   },
   CrapStandard: {
     format: fmt(cs, {separator: " ", max: "(e^6)3e18"})
+  },
+  PointsProgressionStandard: {
+    format: ptsprAbbreviate
   }
 }
 
