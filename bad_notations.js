@@ -433,7 +433,7 @@ function fmt(f, df) {
 }
 return {
   GrandButtonIncrementalStandard: {
-    format: gbiAbbreviate(input)
+    format: gbiAbbreviate
   },
   True179ucStandard: {
     format: fmt(_179uc, {max: "1e60003"})
