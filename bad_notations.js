@@ -408,7 +408,7 @@ function fmt(f, df) {
   }
 }
 return {
-  GrandButtonSimulatorStandard: {
+  GrandButtonIncrementalStandard: {
     format: function (input) { return gbiAbbreviate(input) }
   },
   OldSetsumiStandard: {
