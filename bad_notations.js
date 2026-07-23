@@ -61,7 +61,7 @@ function ptsprAbbreviate(n) {
     return `${mantissa.toPrecision(4)}${n.gte("1e3") ? "kMB"[n.log10().div("3").floor().toNumber()] : ""}`
   } else if (n.lt("1e204")) {
     let mantissa = n.div("1e12").div(new Decimal("1e6").pow(n.div("1e12").log10().div("6").floor()));
-    return `${mantissa.gte("1e3") ? mantissa.toNumber().toLocaleString("en-US") : mantissa.toPrecision(4)}${n.gte("1e3") ? r[n.div("1e12").log10().div("6").floor().toNumber()]}`
+    return `${mantissa.gte("1e3") ? mantissa.toNumber().toLocaleString("en-US") : mantissa.toPrecision(4)}${r[n.div("1e12").log10().div("6").floor().toNumber()]}`
   } else if (n.lt("1e213")) {
     let mantissa = n.div("1e204");
     return `${mantissa.gte("1e3") ? mantissa.toNumber().toLocaleString("en-US") : mantissa.toPrecision(4)}i`
