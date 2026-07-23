@@ -411,6 +411,9 @@ return {
   GrandButtonIncrementalStandard: {
     format: function (input) { return gbiAbbreviate(input) }
   },
+  True179ucStandard: {
+    format: fmt(_179uc, {max: "1e60003"})
+  },
   OldSetsumiStandard: {
     format: fmt(ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})
   },
