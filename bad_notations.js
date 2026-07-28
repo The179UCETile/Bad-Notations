@@ -239,7 +239,7 @@ function cs(illion, c = false) {
     " kj mj gj aj lj fj jj sj bj gp gm sp vj mp pj gg kp oj pp hj", " gp gm bp gb ab lb fb jb sb bb", " hb mb gub aub lub fub jub sub bub",
     " hz oz nz dz uz ez fz sz bz", " gz ay hy ky py sy px ny zy", " aw bw gw dw tw iw kw lw sw",
     " hÞ dÞ tÞ tß aÞ sÞ sß cÞ nÞ eÞ að hð lð oð pð cð wð að gð oð tø sø lø jø gø iø xø wø mø hø", " eÞ oð hø uæ væ sæ tæ hæ næ aæ tœ iœ uœ qœ tſ bœ tƹ nœ zœ", " aæ nſ bſ kſ gſ pſ vſ uſ lſ",
-    " rƹ zƹ dƹ vƹ fƹ"
+    " eƹ zƹ dƹ vƹ fƹ"
   ].map(a => a.split(" "));
   function rnd(d, m = false, n = illion) {
     return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -377,6 +377,7 @@ function abbrevN(n, func, config) {
   if (n.sign == -1) {
     return `-${abbrevN(n.neg(), func, config)}`;
   };
+  if (n.eq("0")) return "0";
   let defaults = {
     separator: "",              // Separator between the number and the prefix.
     truncLeft: false,           // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
