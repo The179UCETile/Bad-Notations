@@ -101,7 +101,7 @@ function ossn(illion) {
     return s;
   } else {
     // use secondary notation????
-    return `Max(${fmt(ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})(illion.log10())})`
+    return `Max(${abbrevN(illion.log10(), ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})})`
   }
 }
 function _179uc(illion) {
