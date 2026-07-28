@@ -86,7 +86,7 @@ function ossn(illion) {
     return "Qag";
   } else if (illion.lt("1e3")) {
     return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`
-  } else {
+  } else if (illion.lt("1.7976931348623157e308")) {
     let l = Math.floor(Math.log10(nm) / 3), s = "";
     for (let i = 0; i <= l; i++) {
       let j = i * 3;
@@ -99,7 +99,10 @@ function ossn(illion) {
       }
     };
     return s;
-  }
+  } else {
+    // use secondary notation????
+    return `Max(${fmt(ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})(illion.log10())})`
+  }
 }
 function _179uc(illion) {
   const r = ["K M B T q Q s S o n", " u D T q Q s S o n", " d v t Qa Qq Sx Sp O N", " c Du Tr Qu Qi Ss Se Og Nn", " Mi Dm Ti Qd Qn sm Sm Ot Nn", " My"].map(a => a.split(" "));
@@ -440,7 +443,7 @@ return {
     format: fmt(_179uc, {max: "1e60003"})
   },
   OldSetsumiStandard: {
-    format: fmt(ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})
+    format: fmt(ossn, {separator: " ", truncLeft: true, max: "ee1.7976931348623157e308"})
   },
   VectorStandard: {
     format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
