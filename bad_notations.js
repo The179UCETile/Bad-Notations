@@ -86,7 +86,7 @@ function ossn(illion) {
     return "Qag";
   } else if (illion.lt("1e3")) {
     return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`
-  } else if (illion.lt("1.7976931348623157e308")) {
+  } else if (Decimal.pow("1e3", illion.add("1")).log10().lt("1.7976931348623157e308")) {
     let l = Math.floor(Math.log10(nm) / 3), s = "";
     for (let i = 0; i <= l; i++) {
       let j = i * 3;
@@ -101,7 +101,7 @@ function ossn(illion) {
     return s;
   } else {
     // use secondary notation????
-    return `Max(${abbrevN(illion.log10(), ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})})`
+    return `Max(${abbrevN(Decimal.pow("1e3", illion.add("1")).log10(), ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308"})})`
   }
 }
 function _179uc(illion) {
