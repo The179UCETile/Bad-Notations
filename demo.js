@@ -7,7 +7,7 @@ Vector's standard notation: ${BadNotations.VectorStandard.format(decim)}<br>
 New vector's standard notation: ${BadNotations.NewVectorStandard.format(decim)}<br>
 Ultimer's notation: ${BadNotations.Ultimer.format(decim)}<br>
 Merging Legends: ${BadNotations.MergingLegendsStandard.format(decim)}<br>
-Denutation: ${BadNotations.Denutation.format(decim, {max: "ee100"})}<br>
+Denutation: ${BadNotations.Denutation.format(decim)}<br>
 Shit standard: ${BadNotations.CrapStandard.format(decim)}<br>
 Points Progression: ${BadNotations.PointsProgressionStandard.format(decim)}`
 }
