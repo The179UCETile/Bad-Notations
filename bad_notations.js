@@ -394,7 +394,8 @@ function cs(illion, c = false) {
     return s.join("-");
   } else {
     let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor());
-    return `~${abbrevN(tt, cs, {separator: " "})}⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
+    let tt2 = Decimal.pow("1e3", tt.mod("1")).floor();
+    return `~${tt2.gte("2") ? `${tt2.toString()}≫` : ""}${tt.floor().toString()}⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
   }
 }
 function abbrevN(n, func, config) {
