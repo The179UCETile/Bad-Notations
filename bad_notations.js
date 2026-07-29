@@ -33,6 +33,7 @@ function gbiAbbreviate(n) {
   if (Decimal.isNaN(n)) return "NaN";
   if (n.eq("-Infinity")) return "-Infinity";
   if (n.eq("Infinity")) return "Infinity";
+  if (n.eq("0")) return "0";
   if (n.lt("0")) {
     return `-${gbiAbbreviate(n.neg())}`
   }
@@ -53,10 +54,15 @@ function ptsprAbbreviate(n) {
   if (Decimal.isNaN(n)) return "NaN";
   if (n.eq("-Infinity")) return "-Infinity";
   if (n.eq("Infinity")) return "Infinity";
+  if (n.eq("0")) return "0";
   if (n.lt("0")) {
     return `-${ptsprAbbreviate(n.neg())}`
   };
-  if (n.lt("1e12")) {
+  if (n.lt("1e-10")) {
+    return formatSci(n, 4)
+  } else if (n.lt("1")) {
+    return n.toPrecision(4)
+  } if (n.lt("1e12")) {
     let mantissa = n.div(new Decimal("1e3").pow(n.log10().div("3").floor()));
     return `${mantissa.toPrecision(4)}${n.gte("1e3") ? "kMB"[n.log10().div("3").sub("1").floor().toNumber()] : ""}`
   } else if (n.lt("1e204")) {
