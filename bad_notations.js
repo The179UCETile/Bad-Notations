@@ -392,10 +392,12 @@ function cs(illion, c = false) {
       tier2ill = tier2ill.sub("1");
     };
     return s.join("-");
-  } else {
+  } else if (illion.lt("F4503599627370495")) {
     let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor());
     let tt2 = Decimal.pow("1e3", tt.mod("1")).floor();
     return `~${tt2.gte("2") ? `${tt2.toString()}≫` : ""}${tt.floor().toString()}⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
+  } else {
+    return `~1⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
   }
 }
 function abbrevN(n, func, config) {
