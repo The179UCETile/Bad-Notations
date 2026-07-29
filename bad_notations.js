@@ -242,7 +242,7 @@ function cs(illion, c = false) {
     " kj mj gj aj lj fj jj sj bj gp gm sp vj mp pj gg kp oj pp hj", " gp gm bp gb ab lb fb jb sb bb", " hb mb gub aub lub fub jub sub bub",
     " hz oz nz dz uz ez fz sz bz", " gz ay hy ky py sy px ny zy", " aw bw gw dw tw iw kw lw sw",
     " hÞ dÞ tÞ tß aÞ sÞ sß cÞ nÞ eÞ að hð lð oð pð cð wð að gð oð tø sø lø jø gø iø xø wø mø hø", " eÞ oð hø uæ væ sæ tæ hæ næ aæ tœ iœ uœ qœ tſ bœ tƹ nœ zœ", " aæ nſ bſ kſ gſ pſ vſ uſ lſ",
-    " eƹ zƹ dƹ vƹ fƹ sƹ sbƹ aƹ nƹ znƹ elƹ zwƹ dzƹ vzƹ fzƹ szƹ seƹ azƹ nzƹ", " znƹ zeƹ deƹ veƹ feƹ seƹ snƹ aeƹ neƹ", "htƹ ztƹ dtƹ vtƹ ftƹ stƹ skƹ atƹ ntƹ",
+    " eƹ zƹ dƹ vƹ fƹ sƹ sbƹ aƹ nƹ znƹ elƹ zwƹ dzƹ vzƹ fzƹ szƹ seƹ azƹ nzƹ", " znƹ zeƹ deƹ veƹ feƹ seƹ snƹ aeƹ neƹ", " htƹ ztƹ dtƹ vtƹ ftƹ stƹ skƹ atƹ ntƹ",
     " eƽ dƽ tƽ cƽ pƽ sƽ saƽ aƽ nƽ", " dsƽ vsƽ tsƽ csƽ psƽ smƽ slƽ asƽ nsƽ", " sqƽ dqƽ tqƽ cqƽ pqƽ stƽ soƽ aqƽ nqƽ",
     " yɣ eɣ sɣ sƿ wɣ lɣ qɣ bɣ jɣ sƾ syɣ eyɣ ssɣ sƿɣ wsɣ lsɣ qsɣ bsɣ jsɣ", " sƾ eɂ sɂ sǝ wɂ lɂ qɂ bɂ jɂ", " bʚ eʚ sʚ sᴐ wʚ lʚ qʚ bʚ jʚ",
     " mᴕ hᴕ bᴕ bʊ nᴕ sᴕ bɾ tᴕ cᴕ", " mʅ hʅ bʅ bɵ nʅ sʅ bɸ tʅ cʅ", " tƛ hƛ bƛ bȝ nƛ sƛ bƍ tȝ cƛ"
@@ -282,7 +282,7 @@ function cs(illion, c = false) {
     } else if (t9.lt("100")) {
       return `${r[27][rnd("0", 0, t9)]}${r[28][rnd("1", 0, t9)]}`
     } else if (t9.lt("1e3")) {
-      return `${getT7(t9.mod("100"))}${r[29][rnd("2", 0, t9)]}`
+      return `${getT9(t9.mod("100"))}${r[29][rnd("2", 0, t9)]}`
     } else {
       return x(getT9, getT10, "⊷", t9)
     }
@@ -298,9 +298,9 @@ function cs(illion, c = false) {
     if (t7.lt("20")) {
       return r[21][t7.toNumber()];
     } else if (t7.lt("100")) {
-      return `${r[22][rnd("1", 0, t7)]}${r[21][rnd("0", 0, t7)]}`
+      return `${r[21][rnd("0", 0, t7)]}${r[22][rnd("1", 0, t7)]}`
     } else if (t7.lt("1e3")) {
-      return `${r[23][rnd("2", 0, t7)]}${getT7(t7.mod("100"))}`
+      return `${getT7(t7.mod("100"))}${r[23][rnd("2", 0, t7)]}`
     } else {
       return x(getT7, getT8, "%", t7)
     }
