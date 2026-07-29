@@ -242,7 +242,10 @@ function cs(illion, c = false) {
     " kj mj gj aj lj fj jj sj bj gp gm sp vj mp pj gg kp oj pp hj", " gp gm bp gb ab lb fb jb sb bb", " hb mb gub aub lub fub jub sub bub",
     " hz oz nz dz uz ez fz sz bz", " gz ay hy ky py sy px ny zy", " aw bw gw dw tw iw kw lw sw",
     " hÞ dÞ tÞ tß aÞ sÞ sß cÞ nÞ eÞ að hð lð oð pð cð wð að gð oð tø sø lø jø gø iø xø wø mø hø", " eÞ oð hø uæ væ sæ tæ hæ næ aæ tœ iœ uœ qœ tſ bœ tƹ nœ zœ", " aæ nſ bſ kſ gſ pſ vſ uſ lſ",
-    " eƹ zƹ dƹ vƹ fƹ"
+    " eƹ zƹ dƹ vƹ fƹ sƹ sbƹ aƹ nƹ znƹ elƹ zwƹ dzƹ vzƹ fzƹ szƹ seƹ azƹ nzƹ", " znƹ zeƹ deƹ veƹ feƹ seƹ snƹ aeƹ neƹ", "htƹ ztƹ dtƹ vtƹ ftƹ stƹ skƹ atƹ ntƹ",
+    " eƽ dƽ tƽ cƽ pƽ sƽ saƽ aƽ nƽ", " dsƽ vsƽ tsƽ csƽ psƽ smƽ slƽ asƽ nsƽ", " sqƽ dqƽ tqƽ cqƽ pqƽ stƽ soƽ aqƽ nqƽ",
+    " yɣ eɣ sɣ sƿ wɣ lɣ qɣ bɣ jɣ sƾ syɣ eyɣ ssɣ sƿɣ wsɣ lsɣ qsɣ bsɣ jsɣ", " sƾ eɂ sɂ sǝ wɂ lɂ qɂ bɂ jɂ", " bʚ eʚ sʚ sᴐ wʚ lʚ qʚ bʚ jʚ",
+    " mᴕ hᴕ bᴕ bʊ nᴕ sᴕ bɾ tᴕ cᴕ", " mʅ hʅ bʅ bɵ nʅ sʅ bɸ tʅ cʅ", " tƛ hƛ bƛ bȝ nƛ sƛ bƍ tȝ cƛ"
   ].map(a => a.split(" "));
   function rnd(d, m = false, n = illion) {
     return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -270,6 +273,38 @@ function cs(illion, c = false) {
     };
     return s.join(sp)
   }
+  function getT10(t10) {
+    return `${r[32][rnd("2", 0, t10)]}${r[31][rnd("1", 0, t10)]}${r[30][rnd("0", 0, t10)]}`;
+  }
+  function getT9(t9) {
+    if (t9.lt("20")) {
+      return r[27][t9.toNumber()];
+    } else if (t9.lt("100")) {
+      return `${r[27][rnd("0", 0, t9)]}${r[28][rnd("1", 0, t9)]}`
+    } else if (t9.lt("1e3")) {
+      return `${getT7(t9.mod("100"))}${r[29][rnd("2", 0, t9)]}`
+    } else {
+      return x(getT9, getT10, "⊷", t9)
+    }
+  }
+  function getT8(t8) {
+    if (t8.lt("1e3")) {
+      return `${r[24][rnd("0", 0, t8)]}${r[25][rnd("1", 0, t8)]}${r[26][rnd("2", 0, t8)]}`;
+    } else {
+      return x(getT8, getT9, "∀", t8);
+    }
+  }
+  function getT7(t7) {
+    if (t7.lt("20")) {
+      return r[21][t7.toNumber()];
+    } else if (t7.lt("100")) {
+      return `${r[22][rnd("1", 0, t7)]}${r[21][rnd("0", 0, t7)]}`
+    } else if (t7.lt("1e3")) {
+      return `${r[23][rnd("2", 0, t7)]}${getT7(t7.mod("100"))}`
+    } else {
+      return x(getT7, getT8, "%", t7)
+    }
+  }
   function getT6(t6) {
     if (t6.lt("30")) {
       return r[18][t6.toNumber()];
@@ -278,24 +313,7 @@ function cs(illion, c = false) {
     } else if (t6.lt("1e3")) {
       return `${r[20][rnd("2", 0, t6)]}${getT6(t6.mod("100"))}`
     } else {
-      const s6 = [];
-      let l6 = t6.log10().div("3").floor(), tier7ill = l6;
-      for (let i6 = 0; i6 < (l6.gte("1e9") ? 1 : l6.gte("1e3") ? 2 : l6.gte("100") ? 6 : l6.add("1").toNumber()); i6++) {
-        let j6 = tier7ill.mul("3");
-        let pref6 = r[21][tier7ill.toNumber()];
-        if (tier7ill.gte("1")) {
-          if (rnd(j6, 1, t6) != 0) {
-            s6.push(`${getT6(td(rnd(j6, 1, t6) == 1 ? 0 : rnd(j6, 1, t6)))}${pref6}`);
-          }
-        } else {
-          let st5 = getT6(td(rnd("0", 1, t6)));
-          if (st5 !== "") {
-            s6.push(st5);
-          }
-        };
-        tier7ill = tier7ill.sub("1");
-      };
-      return s6.join("§");
+      return x(getT6, getT7, "§", t6)
     }
   }
   function getT5(t5) {
@@ -354,7 +372,7 @@ function cs(illion, c = false) {
     return r[c ? 1 : 0][nm];
   } else if (illion.lt("1e3")) {
     return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
-  } else {
+  } else if (illion.lt("(e^9)3e3")) {
     const s = [];
     let l = illion.log10().div("3").floor(), tier2ill = l;
     if (l.gte("1e9")) return getT2(l);
@@ -374,6 +392,9 @@ function cs(illion, c = false) {
       tier2ill = tier2ill.sub("1");
     };
     return s.join("-");
+  } else {
+    let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor());
+    return `~${abbrevN(tt, cs, {separator: " "})}⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
   }
 }
 function abbrevN(n, func, config) {
@@ -461,7 +482,7 @@ return {
     format: fmt(dn, {separator: " ", base: "10", min: "10", max: "1e1.7976931348623157e308" /* intentional */, maxChars: Infinity})
   },
   CrapStandard: {
-    format: fmt(cs, {separator: " ", max: "(e^6)3e18"})
+    format: fmt(cs, {separator: " "})
   },
   PointsProgressionStandard: {
     format: ptsprAbbreviate
