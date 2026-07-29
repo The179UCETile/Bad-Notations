@@ -402,7 +402,7 @@ function cs(illion, c = false) {
     let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor()), tt2 = Decimal.pow("1e3", tt.mod("1")), ttn = tt.toNumber(), tier = illion.slog("1e3").floor().add("1");
     const s = [];
     for (let i = 0; i < Math.min(6, ttn); i++) {
-      let r = tt2.mul(Decimal.pow("1e3", i)).mod("100").floor();
+      let r = tt2.mul(Decimal.pow("1e3", i)).mod("1e3").floor();
       if (r.neq("0")) {
         if (tt.gte("1")) {
           s.push(`${r.gte("2") ? `${r.toString()}≫` : ""}${tt.floor().toString()}⍍${abbrevN(tier, cs, {separator: " "})}`)
