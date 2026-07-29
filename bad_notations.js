@@ -97,7 +97,7 @@ function ossn(illion) {
     for (let i = 0; i <= l; i++) {
       let j = i * 3;
       if (i == 1) {
-        s += `${x(rnd(3) != 0 ? `${r[5][rnd("3")]}${r[6][1]}`: "")}${x(rnd("4") != 0 ? `${r[5][rnd(" 4")]}My`: "")}${x(rnd(5) != 0 ? `${r[4][rnd("5")]}${r[6][1]}`: "")}`;
+        s += `${x(rnd(3) != 0 ? `${r[5][rnd("3")]}${r[6][1]}`: "")}${x(rnd("4") != 0 ? `${r[5][rnd("4")]}My`: "")}${x(rnd(5) != 0 ? `${r[4][rnd("5")]}${r[6][1]}`: "")}`;
       } else if (i > 1) {
         s += rnd(j.toString(), 1) != 0 ? x(`${rnd(j.toString(), 1) < 10 ? r[5][rnd(j.toString())] : ossn(illion.div(new Decimal("10").pow(j)).floor().mod("1e3"))}${r[6][i]}`) : ""
       } else {
