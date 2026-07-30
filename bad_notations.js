@@ -92,8 +92,8 @@ function midNotationAbbreviate(n) {
     return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
   }
   let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
-  let mantissa = n.div(Decimal.pow("10", a.add(Decimal.mul("1000", a.log10().div("1e3").floor())))).toPrecision(3);
-  let pref = `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10")[tn]())}|1`;
+  let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", a.log10().div("1e3").floor())))).toPrecision(3);
+  let pref = `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10").floor()[tn]())}|1`;
   if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`
   } else if (n.lt("1e1e11")) {
