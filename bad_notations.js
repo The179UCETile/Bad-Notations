@@ -142,12 +142,12 @@ function dn(illion, c = false) {
   }
 }
 function vsn(illion, c = false) {
-  const r = ["K Mil Bil Til Qail Qill Sxil Spil Oil Nil Dec Undec", " Un Bil Till Qail Qiil Sxil Spil Oil Nil", " Dec Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
+  const r = ["K Mil Bil Til Qail Qill Sxil Spil Oil Nil Dec Undec", " Un Bil Till Qail Qiil Sxil Spil Oil Nil Dec Undec", " Dec Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
   let nm = illion.toNumber();
-  if (illion.lt("11")) {
+  if (illion.lt("12")) {
     return r[c ? 1 : 0][nm];
   } else if (illion.lt("1e3")) {
     return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
@@ -165,12 +165,12 @@ function vsn(illion, c = false) {
   }
 }
 function nvsn(illion, c = false) {
-  const r = ["K M B T Qua Qit Sx Sp O No Dc Undc", " Un B Till Qua Qiil Sx Sp O No", " Dc Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
+  const r = ["K M B T Qua Qit Sx Sp O No Dc Undc", " Un B Till Qua Qiil Sx Sp O No Dc Undc", " Dc Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
   let nm = illion.toNumber();
-  if (illion.lt("11")) {
+  if (illion.lt("12")) {
     return r[c ? 1 : 0][nm];
   } else if (illion.lt("1e3")) {
     return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
@@ -496,7 +496,7 @@ return {
     format: fmt(un, {separator: " ", max: "1e3e3e6"})
   },
   MergingLegendsStandard: {
-    format: fmt(ml, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
+    format: fmt(ml, {separator: " ",  max: "1e1.7976931348623157e308"})
   },
   Denutation: {
     format: fmt(dn, {separator: " ", base: "10", min: "10", max: "1e1.7976931348623157e308" /* intentional */, maxChars: Infinity})
