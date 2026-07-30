@@ -82,22 +82,22 @@ function midNotationAbbreviate(n) {
   if (n.eq("Infinity")) return "Infinity";
   if (n.eq("0")) return "0";
   if (n.lt("0")) {
-    return `-${ptsprAbbreviate(n.neg())}`
+    return `-${midNotationAbbreviate(n.neg())}`
   };
   function rep(p, x) {
     return x == 0 ? "" : x == 1 ? p : `(${p}^${Math.floor(x)})`
   }
   function prefX(p, x, x2, t) {
     let log = n.log10();
-    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.mod(x2).div(x).mod("10").floor()[tn]()]}${rep(p[10], log.mod(x2).div(x).div("10").floor()[tn]())}|${t} `
+    return log.mod(x2).div(x).lt("1") ? "" : `${p[log.mod(x2).div(x).mod("10").floor()[tn]()]}${rep(p[10], log.mod(x2).div(x).div("10").floor()[tn]())}|${t} `
   }
   let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
   let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", n.log10().div("1e3").floor())))).toPrecision(3);
   let pref = a == 0 ? "" : `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10").floor()[tn]())}|1`;
   if (n.lt("1e-10")) {
-    return formatSci(n, 4)
+    return formatSci(n, 3)
   } else if (n.lt("1")) {
-    return n.toPrecision(4)
+    return n.toPrecision(3)
   } else if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`
   } else if (n.lt("1e1e11")) {
