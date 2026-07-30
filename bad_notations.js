@@ -191,7 +191,7 @@ function un(illion) {
   if (illion.gte("10")) {
     illion = illion.add("1")
   };
-  const r = ["K Myr Bry Tyr Teycr Pyr Hyr Hyi Oyr Eyr De Mcy Dcy Tycr Tetyrc Pncyr Hxycr Hpycr Ocycr Enycr", " De Iycr Tcycr Tetcycr Pcnycr Hcxycr Hpcycr Oycycr Encycr", " Hycr Dhycr Tchycr Tetchycr Pnhycr Hxhycr Hphycr Ochycr Enhycr", " Miy Biy Triy Qaiy Qiy Siy Spiy Oiy Niy Deiy Unyi Deiy Trei Quaiy Quiy Sxiy Spy Ocy Noy", " Deiy Viy Teyi Qugiy Qigy Segy Sepiy Ogey Nogiy", " Cey Ducey Trucey Qucey Quycey Secey Sepcey Occey Nocey", " Ryil Dyril Tyril Gyil Cyil Biyl Pyil Utyil Omyil", " Ril Oryil Yiyil Gyil Cyil Biyl Pyil Utyil Omyil", " Esyil Zesyil Phyil Gaill Nyill Syxyll Sepyill Dyryill Oymyill", " Tetryill Sypryill Dyrpyill Rypryill Nypryill Hypryill Hepryill Opryrill Lysryill", " Fyrly Dyrly Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Fyri Byri Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Zyrly Dyriy Tyriy Pyriy Nyriy Hyriy Oyriy Eyriy", " Heiyr Beiyr Teyir Peyir Heyir Hepyir Oyriry Nyriyr"].map(a => a.split(" "));
+  const r = ["K Myr Bry Tyr Teycr Pyr Hyr Hyi Oyr Eyr De Mcy Dcy Tycr Tetyrc Pncyr Hxycr Hpycr Ocycr Enycr", " De Iycr Tcycr Tetcycr Pcnycr Hcxycr Hpcycr Oycycr Encycr", " Hycr Dhycr Tchycr Tetchycr Pnhycr Hxhycr Hphycr Ochycr Enhycr", " Miy Biy Triy Qaiy Qiy Siy Spiy Oiy Niy Deiy Unyi Deiy Trei Quaiy Quiy Sxiy Spy Ocy Noy", " Deiy Viy Teyi Qugiy Qigy Segy Sepiy Ogey Nogiy", " Cey Ducey Trucey Qucey Quycey Secey Sepcey Occey Nocey", " Ryil Dyril Tyril Gyil Cyil Biyl Pyil Utyil Omyil", " Ril Oryil Yiyil Gyil Cyil Biyl Pyil Utyil Omyil", " Esyil Zesyil Phyil Gaill Nyill Syxyll Sepyill Dyryill Oymyill", " Tetryill Sypryill Dyrpyill Rypryill Nypryill Hypryill Hepryill Opryrill Lysryill", " Fyrly Dyrly Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Fyri Byri Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Zyrly Dyriy Tyriy Pyriy Nyriy Hyriy Syriy Oyriy Eyriy", " Heiyr Beiyr Teyir Peyir Heyir Syrly Hepyir Oyriry Nyriyr"].map(a => a.split(" "));
   function rnd(d, m = false, n = illion) {
     return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
@@ -199,7 +199,7 @@ function un(illion) {
   if (illion.lt("20")) {
     return r[0][nm];
   } else if (illion.lt("1e3")) {
-    let er = nm % 100 < 20 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
+    let er = nm % 100 < 20 && nm % 100 != 0 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
     return `${er}${r[2][rnd("2")]}`;
   } else {
     let l = illion.log10().div("3").floor().toNumber(), s = "";
