@@ -191,7 +191,7 @@ function un(illion) {
   if (illion.gte("10")) {
     illion = illion.add("1")
   };
-  const r = ["K Myr Bry Tyr Teycr Pyr Hyr Hyi Oyr Eyr De Mcy Dcy Tycr Tetyrc Pncyr Hxycr Hpycr Ocycr Enycr", " De Iycr Tcycr Tetcycr Pcnycr Hcxycr Hpcycr Oycycr Encycr", " Hycr Dhycr Tchycr Tetchycr Pnhycr Hxhycr Hphycr Ochycr Enhycr", " Miy Biy Triy Qaiy Qiy Siy Spiy Oiy Niy Deiy Unyi Deiy Trei Quaiy Quiy Sxiy Spy Ocy Noy", " Deiy Viy Teyi Qugiy Qigy Segy Sepiy Ogey Nogiy", " Cey Ducey Trucey Qucey Quycey Secey Sepcey Occey Nocey", " Ryil Dyril Tyril Gyil Cyil Biyl Pyil Utyil Omyil", " Ril Oryil Yiyil Gyil Cyil Biyl Pyil Utyil Omyil", " Esyil Zesyil Phyil Gaill Nyill Syxyll Sepyill Dyryill Oymyill", " Tetryill Sypryill Dyrpyill Rypryill Nypryill Hypryill Hepryill Opryrill Lysryill"].map(a => a.split(" "));
+  const r = ["K Myr Bry Tyr Teycr Pyr Hyr Hyi Oyr Eyr De Mcy Dcy Tycr Tetyrc Pncyr Hxycr Hpycr Ocycr Enycr", " De Iycr Tcycr Tetcycr Pcnycr Hcxycr Hpcycr Oycycr Encycr", " Hycr Dhycr Tchycr Tetchycr Pnhycr Hxhycr Hphycr Ochycr Enhycr", " Miy Biy Triy Qaiy Qiy Siy Spiy Oiy Niy Deiy Unyi Deiy Trei Quaiy Quiy Sxiy Spy Ocy Noy", " Deiy Viy Teyi Qugiy Qigy Segy Sepiy Ogey Nogiy", " Cey Ducey Trucey Qucey Quycey Secey Sepcey Occey Nocey", " Ryil Dyril Tyril Gyil Cyil Biyl Pyil Utyil Omyil", " Ril Oryil Yiyil Gyil Cyil Biyl Pyil Utyil Omyil", " Esyil Zesyil Phyil Gaill Nyill Syxyll Sepyill Dyryill Oymyill", " Tetryill Sypryill Dyrpyill Rypryill Nypryill Hypryill Hepryill Opryrill Lysryill", " Fyrly Dyrly Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Fyri Byri Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Zyrly Dyriy Tyriy Pyriy Nyriy Hyriy Oyriy Eyriy", " Heiyr Beiyr Teyir Peyir Heyir Hepyir Oyriry Nyriyr"].map(a => a.split(" "));
   function rnd(d, m = false, n = illion) {
     return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
@@ -199,13 +199,15 @@ function un(illion) {
   if (illion.lt("20")) {
     return r[0][nm];
   } else if (illion.lt("1e3")) {
-    return `${rnd("1") == 1 || rnd("0") == 0 ? "" : r[0][rnd("0", rnd("1") < 2) % 100]}${rnd("1") < 2 ? "" : r[1][rnd("1")]}${r[2][rnd("2")]}`;
+    let er = nm % 100 < 20 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
+    return `${er}${r[2][rnd("2")]}`;
   } else {
     let l = illion.log10().div("3").floor().toNumber(), s = "";
     let tier2ill = l, t2id = Decimal.fromNumber(tier2ill);
     for (let i = 0; i < (l > 1e3 ? 1 : l > 6 ? 6 : (l + 1)); i++) {
       let j = tier2ill * 3;
-      let pref = tier2ill < 20 ? `${(tier2ill % 100) == 10 ? "" : r[3][tier2ill]}${r[4][rnd(1, 0, t2id)]}`: `${(tier2ill % 100) == 10 ? "" : r[3][rnd(0, rnd(1, 0, t2id) < 2, t2id) % 100]}${r[4][rnd(1, 0, t2id)]}${r[5][rnd(2, 0, t2id)]}${r[tier2ill > 1e4 ? 7 : 6][rnd(3, 0, t2id)]}${r[8][rnd(4, 0, t2id)]}${r[9][rnd(5, 0, t2id)]}`;
+      let t4 = tier2ill > 1e6 ? `${r[tier2ill > 1e7 ? 11 : 10][rnd(6, 0, t2id)]}${r[12][rnd(7, 0, t2id)]}${r[13][rnd(8, 0, t2id)]}'` : "";
+      let pref = tier2ill < 20 ? `${(tier2ill % 100) == 10 ? "" : r[3][tier2ill]}${r[4][rnd(1, 0, t2id)]}`: `${t4}${(tier2ill % 100) == 10 ? "" : r[3][rnd(0, rnd(1, 0, t2id) < 2, t2id) % 100]}${r[4][rnd(1, 0, t2id)]}${r[5][rnd(2, 0, t2id)]}${r[tier2ill > 1e4 ? 7 : 6][rnd(3, 0, t2id)]}${r[8][rnd(4, 0, t2id)]}${r[9][rnd(5, 0, t2id)]}`;
       if (tier2ill >= 1) {
         s += rnd(j.toString(), 1) != 0 ? `${rnd(j.toString(), 1) == 1 ? "" : un(Decimal.fromNumber(rnd(j.toString(), 1)))}${pref}` : ""
       } else {
@@ -493,7 +495,7 @@ return {
     format: fmt(nvsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
   },
   Ultimer: {
-    format: fmt(un, {separator: " ", max: "1e3e3e6"})
+    format: fmt(un, {separator: " ", max: "1e3e3e9"})
   },
   MergingLegendsStandard: {
     format: fmt(ml, {separator: " ",  max: "1e1.7976931348623157e308"})
