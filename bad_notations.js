@@ -75,6 +75,34 @@ function ptsprAbbreviate(n) {
     return formatSci(n, 2);
   }
 }
+function midNotationAbbreviate(n) {
+  const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt"].map(a => a.split(" "));
+  if (Decimal.isNaN(n)) return "NaN";
+  if (n.eq("-Infinity")) return "-Infinity";
+  if (n.eq("Infinity")) return "Infinity";
+  if (n.eq("0")) return "0";
+  if (n.lt("0")) {
+    return `-${ptsprAbbreviate(n.neg())}`
+  };
+  function rep(p, x) {
+    return x == 0 ? "" : x == 1 ? p : `(${p}^${Math.floor(x)})`
+  }
+  function prefX(p, x, x2, t) {
+    let log = n.log10();
+    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
+  }
+  let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
+  let mantissa = n.div(Decimal.pow("10", a.add(Decimal.mul("1000", a.log10().div("1e3").floor())))).toPrecision(3);
+  let pref = `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10")[tn]())}|1`;
+  if (n.lt("1e1000")) {
+    return `${mantissa} ${pref}`
+  } else if (n.lt("1e1e11")) {
+    let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`;
+    return `${mantissa} ${pre.trim()}`
+  } else {
+    return formatSci(n);
+  }
+}
 function ossn(illion) {
   const r = ["K,M,B,T,Qa,Qi,Sx,Sp,Oc,No", ",U,D,T,Q,Qi,S,Sp,O,N", ",De,Vi,Ti,Qg,Qqg,Sag,Stg,Otg,Nag", ",Cen,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",C,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",,Du,Tre,Qua,Qui,Sx,Sep,Oct,Non", ",Mi,Mc,Na,Pic,Fem,Att,Zp,Yc,Xo,Vc,Me,Duec,Trec,Tetrec,Pentec,Hexec,Heptec,Octec,Ennec,Icos,Meicos,Dueicos,Trioicos,Tetreicos,Penteicos,Hexeicos,Hepteicos,Octeicos,Enneicos,Triacont,Metriacont,Duetriacont,Triotriacont,Tetretriacont,Pentetriacont,Hexetriacont,Heptetriacont,Octetriacont,Ennetriacont,Tetracont,Metetracont,Duetetracont,Triotetracont,Tetretetracont,Pentetetracont,Hexetetracont,Heptetetracont,Octetetracont,Ennetetracont,Pentacont,Mepentacont,Duepentacont,Triopentacont,Tetrepentacont,Pentepentacont,Hexepentacont,Heptepentacont,Octepentacont,Ennepentacont,Hexacont,Mehexacont,Duehexacont,Triohexacont,Tetrehexacont,Pentehexacont,Hexehexacont,Heptehexacont,Octehexacont,Ennehexacont,Heptacont,Meheptacont,Dueheptacont,Trioheptacont,Tetreheptacont,Penteheptacont,Hexeheptacont,Hepteheptacont,Octeheptacont,Enneheptacont,Octacont,Meoctacont,Dueoctacont,Triooctacont,Tetreoctacont,Penteoctacont,Hexeoctacont,Hepteoctacont,Octeoctacont,Enneoctacont,Ennacont,Meennacont,Dueennacont,Trioennacont,Tetreennacont,Penteennacont,Hexeennacont,Hepteennacont,Octeennacont,Enneennacont,Hect,Mehect,Duehect,Triohect"].map(a => a.split(","));
   function x(str) {
@@ -199,7 +227,7 @@ function un(illion) {
   if (illion.lt("20")) {
     return r[0][nm];
   } else if (illion.lt("1e3")) {
-    let er = nm % 100 < 20 && nm % 100 != 0 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
+    let er = nm % 100 == 0 ? "" : nm % 100 < 20 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
     return `${er}${r[2][rnd("2")]}`;
   } else {
     let l = illion.log10().div("3").floor().toNumber(), s = "";
@@ -508,6 +536,9 @@ return {
   },
   PointsProgressionStandard: {
     format: ptsprAbbreviate
+  },
+  Mid: {
+    format: midNotationAbbreviate
   }
 }
 
