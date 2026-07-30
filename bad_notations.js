@@ -62,7 +62,7 @@ function ptsprAbbreviate(n) {
     return formatSci(n, 4)
   } else if (n.lt("1")) {
     return n.toPrecision(4)
-  } if (n.lt("1e12")) {
+  } else if (n.lt("1e12")) {
     let mantissa = n.div(new Decimal("1e3").pow(n.log10().div("3").floor()));
     return `${mantissa.toPrecision(4)}${n.gte("1e3") ? "kMB"[n.log10().div("3").sub("1").floor().toNumber()] : ""}`
   } else if (n.lt("1e204")) {
@@ -92,9 +92,13 @@ function midNotationAbbreviate(n) {
     return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).mod("10").floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
   }
   let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
-  let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", a.log10().div("1e3").floor())))).toPrecision(3);
-  let pref = `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10").floor()[tn]())}|1`;
-  if (n.lt("1e1000")) {
+  let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", n.log10().div("1e3").floor())))).toPrecision(3);
+  let pref = a == 0 ? "" : `${r[0][a.mod("10")[tn]()]}${rep("No", a.div("10").floor()[tn]())}|1`;
+  if (n.lt("1e-10")) {
+    return formatSci(n, 4)
+  } else if (n.lt("1")) {
+    return n.toPrecision(4)
+  } else if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`
   } else if (n.lt("1e1e11")) {
     let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`;
