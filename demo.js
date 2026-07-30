@@ -9,7 +9,8 @@ Ultimer's notation: ${BadNotations.Ultimer.format(decim)}<br>
 Merging Legends: ${BadNotations.MergingLegendsStandard.format(decim)}<br>
 Denutation: ${BadNotations.Denutation.format(decim)}<br>
 Shit standard: ${BadNotations.CrapStandard.format(decim)}<br>
-Points Progression: ${BadNotations.PointsProgressionStandard.format(decim)}`
+Points Progression: ${BadNotations.PointsProgressionStandard.format(decim)}<br>
+Mid notation: ${BadNotations.Mid.format(decim)}`
 }
 document.getElementById("num").addEventListener("input", () => {
   format(document.getElementById("num").value)
