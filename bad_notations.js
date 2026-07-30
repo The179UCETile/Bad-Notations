@@ -89,7 +89,7 @@ function midNotationAbbreviate(n) {
   }
   function prefX(p, x, x2, t) {
     let log = n.log10();
-    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
+    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).mod("10").floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
   }
   let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
   let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", a.log10().div("1e3").floor())))).toPrecision(3);
