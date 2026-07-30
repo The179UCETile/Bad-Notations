@@ -89,7 +89,7 @@ function midNotationAbbreviate(n) {
   }
   function prefX(p, x, x2, t) {
     let log = n.log10();
-    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.div(x).mod(x2).mod("10").floor()[tn]()]}${rep(p[10], log.div(x).div("10").floor()[tn]())}|${t} `
+    return log.div(x).mod(x2).lt("1") ? "" : `${p[log.mod(x2).div(x).mod("10").floor()[tn]()]}${rep(p[10], log.mod(x2).div(x).div("10").floor()[tn]())}|${t} `
   }
   let a = n.log10().mod("1e3").div("3").floor(), tn = "toNumber";
   let mantissa = n.div(Decimal.pow("10", a.mul("3").add(Decimal.mul("1000", n.log10().div("1e3").floor())))).toPrecision(3);
@@ -101,8 +101,8 @@ function midNotationAbbreviate(n) {
   } else if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`
   } else if (n.lt("1e1e11")) {
-    let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`;
-    return `${mantissa} ${pre.trim()}`
+    let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
+    return `${mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`
   } else {
     return formatSci(n);
   }
