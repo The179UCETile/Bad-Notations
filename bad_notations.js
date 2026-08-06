@@ -102,10 +102,13 @@ function midNotationAbbreviate(n) {
     return `${mantissa} ${pref}`
   } else if (n.lt("1e1e38")) {
     let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
-    if (n.gt("1e1e11")) {
+    if (n.gte("1e1e11")) {
       let t6 = [];
       for (let i = new Decimal("11"); i.lt("38"); i = i.add("1")) {
-        t6.push(rep(r[5][i.sub("11").toNumber()], n.log10().div(Decimal.pow("10", i)).mod("10").floor().toNumber(), true));
+        t6pref = rep(r[5][i.sub("11").toNumber()], n.log10().div(Decimal.pow("10", i)).mod("10").floor().toNumber(), true);
+        if (t6pref != "") {
+          t6.push(t6pref);
+        };
       };
       pre = `${t6.join("+")}|6 ${pre}`.trim();
     }
