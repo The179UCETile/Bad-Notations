@@ -76,7 +76,7 @@ function ptsprAbbreviate(n) {
   }
 }
 function midNotationAbbreviate(n) {
-  const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt"].map(a => a.split(" "));
+  const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt", "a b c d e f g h i j k l m n o p q r s t u v w x y z"].map(a => a.split(" "));
   if (Decimal.isNaN(n)) return "NaN";
   if (n.eq("-Infinity")) return "-Infinity";
   if (n.eq("Infinity")) return "Infinity";
@@ -84,8 +84,8 @@ function midNotationAbbreviate(n) {
   if (n.lt("0")) {
     return `-${midNotationAbbreviate(n.neg())}`
   };
-  function rep(p, x) {
-    return x == 0 ? "" : x == 1 ? p : `(${p}^${Math.floor(x)})`
+  function rep(p, x, rev = false) {
+    return x == 0 ? "" : x == 1 ? p : rev ? `(${Math.floor(x)}^${p})` : `(${p}^${Math.floor(x)})`
   }
   function prefX(p, x, x2, t) {
     let log = n.log10();
@@ -100,9 +100,16 @@ function midNotationAbbreviate(n) {
     return n.toPrecision(3)
   } else if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`
-  } else if (n.lt("1e1e11")) {
+  } else if (n.lt("1e1e38")) {
     let pre = `${prefX(r[4], "1e9", "1e11", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
-    return `${mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`
+    if (n.gt("1e1e11")) {
+      let t6 = [];
+      for (let i = new Decimal("11"); i.lt("38"); i = i.add("1")) {
+        t6.push(rep(r[5][i.sub("11").toNumber()], n.log10().div(Decimal.pow("10", i)).mod("10").floor().toNumber(), true));
+      };
+      pre = `${t6.join("+")}|6 ${pre}`.trim();
+    }
+    return `${mantissa} ${pre.length >= 160 ? `${pre.slice(0, 157)}...` : pre}`
   } else {
     return formatSci(n);
   }
