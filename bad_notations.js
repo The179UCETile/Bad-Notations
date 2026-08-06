@@ -104,7 +104,7 @@ function midNotationAbbreviate(n) {
     let pre = `${prefX(r[4], "1e9", "1e12", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
     if (n.gte("1e1e12")) {
       let t6 = [];
-      for (let i = new Decimal("12"); i.lt("38"); i = i.add("1")) {
+      for (let i = n.gte("1e1e19") ? n.log10().log10().floor().sub("6") : new Decimal("12"); i.lt("38"); i = i.add("1")) {
         t6pref = rep(r[5][i.sub("12").toNumber()], n.log10().div(Decimal.pow("10", i)).mod("10").floor().toNumber(), true);
         if (t6pref != "") {
           t6.push(t6pref);
@@ -112,7 +112,7 @@ function midNotationAbbreviate(n) {
       };
       pre = `${t6.join("+")}|6 ${pre}`.trim();
     }
-    return `${mantissa} ${pre.length >= 160 ? `${pre.slice(0, 157)}...` : pre}`
+    return `${mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`
   } else {
     return formatSci(n);
   }
