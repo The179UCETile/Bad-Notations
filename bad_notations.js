@@ -39,14 +39,14 @@ function gbiAbbreviate(n) {
   }
   let mantissa = new Decimal("10").pow(n.log10().mod("3", true));
   let mantissa2 = new Decimal("10").pow(n.log10().mod("1", true));
-  if (n.lte("1e-12") || n.gte("1e3003")) {
+  if (n.lte("1e-12") || n.gte("1e3006")) {
     return n.gte("1e1e1e5") ? n.toString() /* no */ : `${mantissa2.toFixed(3)}e${Decimal.sign(n.log10()) == 1 ? "+" : ""}${n.log10().floor()}`
   } else if (n.gt("1e-12") && n.lt("1")) {
     return n.toFixed(n.log10().neg().div("2").floor().mul("2").add("3").toNumber())
   } else if (n.gte("1") && n.lte("1e3")) {
     return mantissa.toPrecision(4)
   } else {
-    return `${mantissa.toPrecision(4)}${gbi(n.log10().div("3").floor().sub("1").toNumber())}`
+    return `${mantissa.toPrecision(4)}${n.gte("1e3003") ? "MilN" : gbi(n.log10().div("3").floor().sub("1").toNumber())}`
   }
 }
 function ptsprAbbreviate(n) {
