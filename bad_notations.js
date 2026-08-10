@@ -46,7 +46,7 @@ function gbiAbbreviate(n) {
   } else if (n.gte("1") && n.lte("1e3")) {
     return mantissa.toPrecision(4)
   } else {
-    return `${mantissa.toPrecision(4)}${n.gte("1e3003") ? "MilN" : gbi(n.log10().div("3").floor().sub("1").toNumber())}`
+    return `${mantissa.toPrecision(4)}${n.gte("1e3003") ? "MilN" : gbi(n.log10().div("3").floor().sub("1").toNumber())}` // hardcode for 1e3003+
   }
 }
 function ptsprAbbreviate(n) {
