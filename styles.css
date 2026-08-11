@@ -5,3 +5,9 @@ html {
 body {
   font-family: sans-serif;
 }
+#num {
+  position: sticky;
+  top: 10px;
+  border: 2px solid #fff;
+  background-color: #000;
+}
