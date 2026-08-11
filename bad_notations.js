@@ -541,7 +541,7 @@ return {
     format: fmt(un, {separator: " ", max: "1e3e3e9"})
   },
   MergingLegendsStandard: {
-    format: fmt(ml, {separator: " ",  max: "1e1.7976931348623157e308"})
+    format: fmt(ml, {separator: " ", min: "1e6", max: "1e1.7976931348623157e308"})
   },
   Denutation: {
     format: fmt(dn, {separator: " ", base: "10", min: "10", max: "1e1.7976931348623157e308" /* intentional */, maxChars: Infinity})
