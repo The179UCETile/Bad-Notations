@@ -534,7 +534,7 @@ return {
     format: fmt(_179uc, {max: "1e60003"})
   },
   OldSetsumiStandard: {
-    format: fmt(ossn, {separator: " ", truncLeft: true, max: "ee1.7976931348623157e308"})
+    format: fmt(ossn, {separator: " ", truncLeft: true})
   },
   VectorStandard: {
     format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
