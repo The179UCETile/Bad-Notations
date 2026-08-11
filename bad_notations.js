@@ -153,7 +153,7 @@ function ossn(illion, c = false) {
     let n = Decimal.pow("1e3", illion.add("1")).log10();
     let mx = n.slog().sub("1.502198737548156").floor(); // slog_10(1.7976931348623157e308) - 1
     function rr(num) {
-      return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 40})
+      return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 32})
     };
     return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
   }
@@ -534,7 +534,7 @@ return {
     format: fmt(_179uc, {max: "1e60003"})
   },
   OldSetsumiStandard: {
-    format: fmt(ossn, {separator: " ", truncLeft: true})
+    format: fmt(ossn, {separator: " ", truncLeft: true, maxChars: 55})
   },
   VectorStandard: {
     format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
