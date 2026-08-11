@@ -7,7 +7,7 @@ function gbi(illion) {
       afterTen: ["", ...("UDtqQsSon".split(""))]
     },
     tens: [, ["", ...("dVTqQsSON".split(""))], ",d,Vg,Tg,qg,Qg,sg,Sg,Og,Ng".split(","), ",d,V,T,qg,Qg,sg,Sg,O,N".split(",")],
-    hundreds: [, ["", ...("CDtqQsSON".split(""))], ",Ce,Dc,tc,qG,QG,sc,Sc,OG,NG".split(","), ",Cen,Duc,TrC,qGe,QGe,sCe,SCe,OGe,NGe".split(",")]
+    hundreds: [, ["", ...("CDtqQsSON".split(""))], ",Ce,Dc,tc,qG,QG,sc,Sc,OG,NG".split(","), ",Cen,DuC,TrC,qGe,QGe,sCe,SCe,OGe,NGe".split(",")]
   };
   let ones = illion % 10, tens = Math.floor(illion / 10) % 10, hundreds = Math.floor(illion / 100);
   if (illion % 100 == 0 && illion != 0) {
@@ -118,7 +118,7 @@ function midNotationAbbreviate(n) {
     return formatSci(n);
   }
 }
-function ossn(illion) {
+function ossn(illion, c = false) {
   const r = ["K,M,B,T,Qa,Qi,Sx,Sp,Oc,No", ",U,D,T,Q,Qi,S,Sp,O,N", ",De,Vi,Ti,Qg,Qqg,Sag,Stg,Otg,Nag", ",Cen,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",C,Ducen,Trucen,Qd,Qg,Sc,Spg,Og,Ng", ",,Du,Tre,Qua,Qui,Sx,Sep,Oct,Non", ",Mi,Mc,Na,Pic,Fem,Att,Zp,Yc,Xo,Vc,Me,Duec,Trec,Tetrec,Pentec,Hexec,Heptec,Octec,Ennec,Icos,Meicos,Dueicos,Trioicos,Tetreicos,Penteicos,Hexeicos,Hepteicos,Octeicos,Enneicos,Triacont,Metriacont,Duetriacont,Triotriacont,Tetretriacont,Pentetriacont,Hexetriacont,Heptetriacont,Octetriacont,Ennetriacont,Tetracont,Metetracont,Duetetracont,Triotetracont,Tetretetracont,Pentetetracont,Hexetetracont,Heptetetracont,Octetetracont,Ennetetracont,Pentacont,Mepentacont,Duepentacont,Triopentacont,Tetrepentacont,Pentepentacont,Hexepentacont,Heptepentacont,Octepentacont,Ennepentacont,Hexacont,Mehexacont,Duehexacont,Triohexacont,Tetrehexacont,Pentehexacont,Hexehexacont,Heptehexacont,Octehexacont,Ennehexacont,Heptacont,Meheptacont,Dueheptacont,Trioheptacont,Tetreheptacont,Penteheptacont,Hexeheptacont,Hepteheptacont,Octeheptacont,Enneheptacont,Octacont,Meoctacont,Dueoctacont,Triooctacont,Tetreoctacont,Penteoctacont,Hexeoctacont,Hepteoctacont,Octeoctacont,Enneoctacont,Ennacont,Meennacont,Dueennacont,Trioennacont,Tetreennacont,Penteennacont,Hexeennacont,Hepteennacont,Octeennacont,Enneennacont,Hect,Mehect,Duehect,Triohect"].map(a => a.split(","));
   function x(str) {
     return str.length != 0 ? str[0].toUpperCase() + (str.slice(1) ?? "").toLowerCase() : "";
@@ -128,13 +128,13 @@ function ossn(illion) {
   }
   let nm = illion.toNumber();
   if (illion.lt("10")) {
-    return r[0][nm];
+    return r[c ? 5 : 0][nm];
   } else if (illion.eq("10")) {
     return "Dec";
   } else if (illion.eq("40")) {
     return "Qag";
   } else if (illion.lt("1e3")) {
-    return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`
+    return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}`
   } else if (Decimal.pow("1e3", illion.add("1")).log10().lt("1.7976931348623157e308")) {
     let l = Math.floor(Math.log10(nm) / 3), s = "";
     for (let i = (l > 6 ? l - 6 : 0); i <= l; i++) {
@@ -142,7 +142,7 @@ function ossn(illion) {
       if (i == 1) {
         s += `${x(rnd(3) != 0 ? `${r[5][rnd("3")]}${r[6][1]}`: "")}${x(rnd("4") != 0 ? `${r[5][rnd("4")]}My`: "")}${x(rnd(5) != 0 ? `${r[4][rnd("5")]}${r[6][1]}`: "")}`;
       } else if (i > 1) {
-        s += rnd(j.toString(), 1) != 0 ? x(`${rnd(j.toString(), 1) < 10 ? r[5][rnd(j.toString())] : ossn(illion.div(new Decimal("10").pow(j)).floor().mod("1e3"))}${r[6][i]}`) : ""
+        s += rnd(j.toString(), 1) != 0 ? x(`ossn(illion.div(new Decimal("10").pow(j)).floor().mod("1e3"), 1)}${r[6][i]}`) : ""
       } else {
         s += illion.mod(1e3).lt("10") ? r[1][rnd("0")] : ossn(illion.mod("1e3"));
       };
@@ -150,7 +150,12 @@ function ossn(illion) {
     return s;
   } else {
     // use secondary notation????
-    return `Max(${abbrevN(Decimal.pow("1e3", illion.add("1")).log10(), ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 40})})`
+    let n = Decimal.pow("1e3", illion.add("1")).log10();
+    let mx = n.slog().sub("1.502198737548156").floor(); // slog_10(1.7976931348623157e308) - 1
+    function rr(num) {
+      return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 40})
+    };
+    return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
   }
 }
 function _179uc(illion) {
