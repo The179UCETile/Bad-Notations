@@ -155,7 +155,7 @@ function ossn(illion, c = false) {
     function rr(num) {
       return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 32})
     };
-    return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${mx.gte("9007199254740989") ? "10 ...TremyTrucenmiTtitrucenmcTrena" : rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
+    return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${mx.gte("9e15") ? "10 ...TremyTrucenmiTtitrucenmcTrena" : rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
   }
 }
 function _179uc(illion) {
@@ -448,7 +448,7 @@ function cs(illion, c = false) {
       tier2ill = tier2ill.sub("1");
     };
     return s.join("-");
-  } else if (illion.lt("F4503599627370495")) {
+  } else if (illion.lt("F4.5e15")) {
     let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor()), tt2 = Decimal.pow("1e3", tt.mod("1")), ttn = tt.toNumber(), tier = illion.slog("1e3").floor().add("1");
     const s = [];
     for (let i = 0; i < Math.min(6, ttn); i++) {
