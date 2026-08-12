@@ -153,7 +153,12 @@ function ossn(illion, c = false) {
     let n = Decimal.pow("1e3", illion.add("1")).log10();
     let mx = n.slog().sub("1.502198737548156").floor(); // slog_10(1.7976931348623157e308) - 1
     function rr(num) {
-      return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 32})
+      return abbrevN(num, ossn, {separator: function(n) {
+        if (n.gte("1e33")) {
+          return " "
+        };
+        return ""
+      }, truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 32})
     };
     return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${mx.gte("9e15") ? "10 ...TremyTrucenmiTtitrucenmcTrena" : rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
   }
