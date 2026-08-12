@@ -134,7 +134,7 @@ function ossn(illion, c = false) {
   } else if (illion.eq("40")) {
     return "Qag";
   } else if (illion.lt("1e3")) {
-    return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}`
+    return `${r[1][rnd("0")]}${rnd("1") == 4 && nm > 100 ? "Qag" : r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}` // handle 1e1940 case
   } else if (Decimal.pow("1e3", illion.add("1")).log10().lt("1.7976931348623157e308")) {
     let l = Math.floor(Math.log10(nm) / 3), s = "";
     for (let i = (l > 6 ? l - 6 : 0); i <= l; i++) {
@@ -473,7 +473,15 @@ function abbrevN(n, func, config) {
   };
   if (n.eq("0")) return "0";
   let defaults = {
-    separator: "",              // Separator between the number and the prefix.
+    separator: "",              // Separator between the number and the prefix. (this can be a function)
+    /* function example
+    function(n) { // decimal (the current number)
+      if (n.gte("1e303")) {
+        return " "
+      };
+      return ""
+    }
+    */
     truncLeft: false,           // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
     maxChars: 50,               // Maximum amount of characters before truncating.
     max: "Infinity",            // Maximum number to use standard.
@@ -511,8 +519,9 @@ function abbrevN(n, func, config) {
       } else {
         let er = new Decimal("10").pow(new Decimal(config.decimals).sub(n.log10().floor().mod(BASELOG)));
         let mantissa = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(er).floor().div(er);
+        let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
         // idk bro
-        return `${config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/\.$/, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/\.$/, "")}${config.separator}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(config.separator + "$", "g"), "");
+        return `${config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/\.$/, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/\.$/, "")}${sep}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
       }
     }
   }
@@ -534,7 +543,12 @@ return {
     format: fmt(_179uc, {max: "1e60003"})
   },
   OldSetsumiStandard: {
-    format: fmt(ossn, {separator: " ", truncLeft: true, maxChars: 55})
+    format: fmt(ossn, {separator: function(n) {
+      if (n.gte("1e33")) {
+        return " "
+      };
+      return ""
+    }, truncLeft: true, maxChars: 55})
   },
   VectorStandard: {
     format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
