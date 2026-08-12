@@ -155,7 +155,7 @@ function ossn(illion, c = false) {
     function rr(num) {
       return abbrevN(num, ossn, {separator: " ", truncLeft: true, max: "1e1.7976931348623157e308", maxChars: 32})
     };
-    return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${mx.gte("9007199254740989") ? "10 B" : rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
+    return `Max${mx.gte("2") ? `^${rr(mx)}` : ""}(${mx.gte("9007199254740989") ? "10 ...TremyTrucenmiTtitrucenmcTrena" : rr(n.iteratedlog("10", mx.sub("1").toNumber()))})`
   }
 }
 function _179uc(illion) {
