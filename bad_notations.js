@@ -134,7 +134,7 @@ function ossn(illion, c = false) {
   } else if (illion.eq("40")) {
     return "Qag";
   } else if (illion.lt("1e3")) {
-    return `${r[1][rnd("0")]}${rnd("1") == 4 && nm > 100 ? "Qag" : r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}` // handle 1e1940 case
+    return `${r[1][rnd("0")]}${nm % 100 == 10 ? "Dec" : rnd("1") == 4 && nm > 100 ? "Qag" : r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}` // handle 1e1940 case
   } else if (Decimal.pow("1e3", illion.add("1")).log10().lt("1.7976931348623157e308")) {
     let l = Math.floor(Math.log10(nm) / 3), s = "";
     for (let i = (l > 6 ? l - 6 : 0); i <= l; i++) {
