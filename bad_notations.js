@@ -234,7 +234,12 @@ function cs2n(illion, c = false) {
     };
     il = arr.join("");
   };
-  il = il.replace(/([aeiou]){2,}/g, "$1").replace(/[aeiou]$/, "");
+  il = il.replace(/aa/g, "a")
+    .replace(/ee/g, "e")
+    .replace(/ii/g, "i")
+    .replace(/oo/g, "o")
+    .replace(/uu/g, "u")
+    .replace(/[aeiou]$/, "");
   return /sand$/.test(il) ? il : `${il}illion`;
 }
 function vsn(illion, c = false) {
