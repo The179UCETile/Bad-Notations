@@ -230,7 +230,7 @@ function cs2n(illion, c = false) {
     let l = Math.floor(Math.log10(nm) / 3);
     for (let i = l; i >= 0; i--) {
       let j = i * 3;
-      arr.push(`${rnd(j.toString(), 1) == 0 ? "k" : cs2n(Decimal.fromNumber(rnd(j.toString(), 1)), 1)}i`);
+      arr.push(rnd(j.toString(), 1) == 0 ? "k" : cs2n(Decimal.fromNumber(rnd(j.toString(), 1)), 1)});
     };
     il = arr.join("");
   };
@@ -239,7 +239,7 @@ function cs2n(illion, c = false) {
     .replace(/ii/g, "i")
     .replace(/oo/g, "o")
     .replace(/uu/g, "u")
-    .replace(/[aeiou]$/, "");
+    .replace(/([aeiou])$/, c ? "$1" : "");
   return c ? il : `${il}illion`;
 }
 function vsn(illion, c = false) {
