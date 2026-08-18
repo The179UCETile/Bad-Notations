@@ -222,7 +222,7 @@ function cs2n(illion, c = false) {
   }
   let nm = illion.toNumber();
   if (illion.lt("10")) {
-    il = (c && illion.eq("0") ? "thousand" : r[0][nm]) + c ? "illi";
+    il = (c && illion.eq("0") ? "thousand" : r[0][nm]) + c ? "illi" : "";
   } else if (illion.lt("1e3")) {
     il = `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[1][rnd("0")]}`;
   } else {
