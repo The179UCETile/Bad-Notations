@@ -240,7 +240,7 @@ function cs2n(illion, c = false) {
     .replace(/oo/g, "o")
     .replace(/uu/g, "u")
     .replace(/[aeiou]$/, "");
-  return /sand$/.test(il) ? il : `${il}illion`;
+  return c ? il : `${il}illion`;
 }
 function vsn(illion, c = false) {
   const r = ["K Mil Bil Til Qail Qill Sxil Spil Oil Nil Dec Undec", " Un Bil Till Qail Qiil Sxil Spil Oil Nil Dec Undec", " Dec Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
