@@ -215,22 +215,22 @@ function cs2(illion, c = false) {
   }
 }
 function cs2n(illion, c = false) {
-  const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deci icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti"].map(a => a.split(" "));
+  const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deci icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti", " mili bili trili quadrili pentili hextili sepili octili novili"].map(a => a.split(" "));
   let il = "";
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
   let nm = illion.toNumber();
   if (illion.lt("10")) {
-    il = nm == 0 ? "thousand" : (c && illion.eq("0") ? "thousand" : r[0][nm]) + (c ? "illi" : "");
+    il = nm == 0 ? "thousand" : (c && nm == 0 ? "thousand" : r[0][nm]) + (c ? "ili" : "");
   } else if (illion.lt("1e3")) {
-    il = `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[1][rnd("0")]}`;
+    il = `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[c ? 4 : 1][rnd("0")]}`;
   } else {
     const arr = [];
     let l = Math.floor(Math.log10(nm) / 3);
     for (let i = l; i >= 0; i--) {
       let j = i * 3;
-      arr.push(rnd(j.toString(), 1) == 0 ? "ki" : cs2n(Decimal.fromNumber(rnd(j.toString(), 1))));
+      arr.push(`${rnd(j.toString(), 1) == 0 ? "k" : cs2n(Decimal.fromNumber(rnd(j.toString(), 1)))}i`);
     };
     il = arr.join("");
   };
