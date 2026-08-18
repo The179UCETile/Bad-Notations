@@ -215,7 +215,7 @@ function cs2(illion, c = false) {
   }
 }
 function cs2n(illion, c = false) {
-  const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deci icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti", " mili bili trili quadrili pentili hextili sepili octili novili"].map(a => a.split(" "));
+  const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deca icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti", " mili bili trili quadrili pentili hextili sepili octili novili"].map(a => a.split(" "));
   let il = "";
   function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
