@@ -196,7 +196,7 @@ function dn(illion, c = false) {
 }
 function cs2(illion, c = false) {
   const r = ["k m b t q p h s o n", " m b t q p h s o n", " d i ʈ ɋ ƥ ħ š ö ɳ", " c ʙ ᴛ ɑ ᴘ ʜ ṡ ȯ ɴ"].map(a => a.split(" "));
-  function rnd(d) {
+  function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
   let nm = illion.toNumber();
@@ -217,12 +217,12 @@ function cs2(illion, c = false) {
 function cs2n(illion, c = false) {
   const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deci icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti"].map(a => a.split(" "));
   let il = "";
-  function rnd(d) {
+  function rnd(d, m = false) {
     return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
   }
   let nm = illion.toNumber();
   if (illion.lt("10")) {
-    il = (c && illion.eq("0") ? "thousand" : r[0][nm]) + c ? "illi" : "";
+    il = (c && illion.eq("0") ? "thousand" : r[0][nm]) + (c ? "illi" : "");
   } else if (illion.lt("1e3")) {
     il = `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[1][rnd("0")]}`;
   } else {
