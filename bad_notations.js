@@ -194,6 +194,49 @@ function dn(illion, c = false) {
     return arr.join("-");
   }
 }
+function cs2(illion, c = false) {
+  const r = ["k m b t q p h s o n", " m b t q p h s o n", " d i ʈ ɋ ƥ ħ š ö ɳ", " c ʙ ᴛ ɑ ᴘ ʜ ṡ ȯ ɴ"].map(a => a.split(" "));
+  function rnd(d) {
+    return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+  }
+  let nm = illion.toNumber();
+  if (illion.lt("10")) {
+    return r[0][nm];
+  } else if (illion.lt("1e3")) {
+    return `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[1][rnd("0")]}`;
+  } else {
+    const arr = [];
+    let l = Math.floor(Math.log10(nm) / 3);
+    for (let i = l; i >= 0; i--) {
+      let j = i * 3;
+      arr.push(cs2(Decimal.fromNumber(rnd(j.toString(), 1))));
+    };
+    return arr.join("_");
+  }
+}
+function cs2n(illion, c = false) {
+  const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deci icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta enneaconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septicenti octocenti noncenti"].map(a => a.split(" "));
+  let il = "";
+  function rnd(d) {
+    return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+  }
+  let nm = illion.toNumber();
+  if (illion.lt("10")) {
+    il = (c && illion.eq("0") ? "thousand" : r[0][nm]) + c ? "illi";
+  } else if (illion.lt("1e3")) {
+    il = `${r[3][rnd("2")]}${r[2][rnd("1")]}${r[1][rnd("0")]}`;
+  } else {
+    const arr = [];
+    let l = Math.floor(Math.log10(nm) / 3);
+    for (let i = l; i >= 0; i--) {
+      let j = i * 3;
+      arr.push(rnd(j.toString(), 1) == 0 ? "sand" : cs2n(Decimal.fromNumber(rnd(j.toString(), 1))));
+    };
+    il = arr.join("");
+  };
+  il = il.replace(/([aeiou]){2,}/g, "$1").replace(/[aeiou]$/, "");
+  return /sand$/.test(il) ? il : `${il}illion`;
+}
 function vsn(illion, c = false) {
   const r = ["K Mil Bil Til Qail Qill Sxil Spil Oil Nil Dec Undec", " Un Bil Till Qail Qiil Sxil Spil Oil Nil Dec Undec", " Dec Vg Tg Qdg Qtg Heg Hxg Og Ng", " Ct Dut Tgt Qat Qnt Sjt Txt Oct Not", " Mi Myc Pic Nan"].map(a => a.split(" "));
   function rnd(d, m = false) {
@@ -578,6 +621,12 @@ return {
   },
   Mid: {
     format: midNotationAbbreviate
+  },
+  CrapStandard2: {
+    format: fmt(cs2, {separator: " ", min: "10", max: "1e1.7976931348623157e308", maxChars: Infinity})
+  },
+  CrapStandard2Names: {
+    format: fmt(cs2n, {separator: " ", min: "10", max: "1e1.7976931348623157e308", maxChars: Infinity})
   }
 }
 
