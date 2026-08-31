@@ -118,7 +118,7 @@ function midNotationAbbreviate(n) {
     }
     if (n.gte("1e1e39")) {
       let t7 = [];
-      for (let i = n.gte("1e1e57") ? loglog.floor().div("3").sub("6").mul("3") : new Decimal("39"); i.lte(loglog); i = i.add("3")) {
+      for (let i = n.gte("1e1e57") ? loglog.div("3").floor().sub("6").mul("3") : new Decimal("39"); i.lte(loglog.div("3").floor().mul("3")); i = i.add("3")) {
         let t7pref = rep(r[6][i.sub("39").div("3").floor().toNumber()], n.log10().div(Decimal.pow("10", i)).mod("1000").floor().toNumber(), true);
         if (t7pref != "") {
           t7.push(t7pref);
