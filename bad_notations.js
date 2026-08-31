@@ -76,7 +76,7 @@ function ptsprAbbreviate(n) {
   }
 }
 function midNotationAbbreviate(n) {
-  const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt", "a b c d e f g h i j k l m n o p q r s t u v w x y z"].map(a => a.split(" "));
+  const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt", "a b c d e f g h i j k l m n o p q r s t u v w x y z", "α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω"].map(a => a.split(" "));
   if (Decimal.isNaN(n)) return "NaN";
   if (n.eq("-Infinity")) return "-Infinity";
   if (n.eq("Infinity")) return "Infinity";
@@ -99,14 +99,14 @@ function midNotationAbbreviate(n) {
   } else if (n.lt("1")) {
     return n.toPrecision(3)
   } else if (n.lt("1e1000")) {
-    return `${mantissa} ${pref}`
-  } else if (n.lt("1e1e38")) {
+    return `${mantissa} ${pref}`.trim()
+  } else if (n.lt("1e1e39")) {
     let pre = `${prefX(r[4], "1e9", "1e12", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
     if (n.gte("1e1e12")) {
       let t6 = [];
       let loglog = n.log10().log10();
       for (let i = n.gte("1e1e19") ? loglog.floor().sub("6") : new Decimal("12"); i.lte(loglog); i = i.add("1")) {
-        t6pref = rep(r[5][i.sub("12").toNumber()], n.log10().div(Decimal.pow("10", i)).mod("10").floor().toNumber(), true);
+        t6pref = rep(r[5][i.sub("12").toNumber()], n.log10().div(Decimal.pow("10", i)).mod(i.eq("37") ? "100" : "10").floor().toNumber(), true);
         if (t6pref != "") {
           t6.push(t6pref);
         };
