@@ -300,7 +300,7 @@ function un(illion) {
   if (illion.lt("20")) {
     return r[0][nm];
   } else if (illion.lt("1e3")) {
-    let er = nm % 100 == 0 ? "" : nm % 100 < 20 ? `${r[0][nm % 100]}` : `${r[0][rnd("0")]}${r[1][rnd("1")]}`;
+    let er = nm % 100 == 0 ? "" : nm % 100 < 20 ? `${r[0][nm % 100]}` : `${rnd("0") == 0 ? "" : r[0][rnd("0")]}${r[1][rnd("1")]}`;
     return `${er}${r[2][rnd("2")]}`;
   } else {
     let l = illion.log10().div("3").floor().toNumber(), s = "";
