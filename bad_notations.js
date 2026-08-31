@@ -100,20 +100,31 @@ function midNotationAbbreviate(n) {
     return n.toPrecision(3)
   } else if (n.lt("1e1000")) {
     return `${mantissa} ${pref}`.trim()
-  } else if (n.lt("1e1e39")) {
+  } else if (n.lt("1e1e111")) {
     let pre = `${prefX(r[4], "1e9", "1e12", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
+    let loglog = n.log10().log10();
+    if (n.gte("1e9007199254740991") pre = "";
     if (n.gte("1e1e12")) {
       let t6 = [];
-      let loglog = n.log10().log10();
       for (let i = n.gte("1e1e19") ? loglog.floor().sub("6") : new Decimal("12"); i.lte(Decimal.min(37, loglog)); i = i.add("1")) {
-        t6pref = rep(r[5][i.sub("12").toNumber()], n.log10().div(Decimal.pow("10", i)).mod(i.eq("37") ? "100" : "10").floor().toNumber(), true);
+        let t6pref = rep(r[5][i.sub("12").toNumber()], n.log10().div(Decimal.pow("10", i)).mod(i.eq("37") ? "100" : "10").floor().toNumber(), true);
         if (t6pref != "") {
           t6.push(t6pref);
         };
       };
       pre = `${t6.join("+")}|6 ${pre}`.trim();
     }
-    return `${mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`
+    if (n.gte("1e1e39")) {
+      let t7 = [];
+      for (let i = n.gte("1e1e57") ? loglog.floor().div("3").sub("6").mul("3") : new Decimal("39"); i.lte(loglog); i = i.add("3")) {
+        let t7pref = rep(r[6][i.sub("39").div("3").floor().toNumber()], n.log10().div(Decimal.pow("10", i)).mod("1000").floor().toNumber(), true);
+        if (t7pref != "") {
+          t7.push(t7pref);
+        };
+      };
+      pre = `${t7.join("+")}|7 ${pre}`.trim();
+    }
+    return `${n.gte("1e1e39") ? "" : mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`.trim()
   } else {
     return formatSci(n);
   }
