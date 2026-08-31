@@ -112,7 +112,9 @@ function midNotationAbbreviate(n) {
           t6.push(t6pref);
         };
       };
-      pre = `${t6.join("+")}|6 ${pre}`.trim();
+      if (!t6.join("+") == "") {
+        pre = `${t6.join("+")}|6 ${pre}`.trim();
+      }
     }
     if (n.gte("1e1e39")) {
       let t7 = [];
