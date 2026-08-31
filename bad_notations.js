@@ -103,7 +103,7 @@ function midNotationAbbreviate(n) {
   } else if (n.lt("1e1e111")) {
     let pre = `${prefX(r[4], "1e9", "1e12", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
     let loglog = n.log10().log10();
-    if (n.gte("1e9007199254740991") pre = "";
+    if (n.gte("1e9007199254740991")) pre = "";
     if (n.gte("1e1e12")) {
       let t6 = [];
       for (let i = n.gte("1e1e19") ? loglog.floor().sub("6") : new Decimal("12"); i.lte(Decimal.min(37, loglog)); i = i.add("1")) {
