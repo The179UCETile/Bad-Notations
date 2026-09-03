@@ -714,7 +714,7 @@ return {
 		format: fmt(cs2n, {separator: " ", max: "1e1.7976931348623157e308", maxChars: Infinity})
 	},
 	NullAreaBadNotation: {
-		format: fmt(nabn, {separator: " ", max: "e3e3e30"})
+		format: fmt(nabn, {separator: " ", max: "e3e3e33"})
 	}
 }
 
