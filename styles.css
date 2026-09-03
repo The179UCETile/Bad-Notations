@@ -1,14 +1,14 @@
 html {
-  background-color: #000;
-  color: #fff;
+	background-color: #000;
+	color: #fff;
 }
 body {
-  font-family: sans-serif;
+	font-family: sans-serif;
 }
 #num {
-  position: sticky;
-  top: 10px;
-  border: 2px solid #fff;
-  background-color: #000;
-  color: #fff;
+	position: sticky;
+	top: 10px;
+	border: 2px solid #fff;
+	background-color: #000;
+	color: #fff;
 }
