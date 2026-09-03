@@ -359,7 +359,7 @@ function ml(illion, c = false) {
 function cs(illion, c = false) {
 	const r = [
 		"k m b t qa q sa s o n", " u d t qa q sa s o n", " de ve te qe qf se sf oe ne", " cn dn tn qn qo sn so on nn",
-		" mi mm ni pi fi ai zi yi ri qi mc dc tc td pc hc hd oc ec is mis dis tis trs pis his hps ois eis", " mc dc tc td pc hc hd oc ec", " q is tt tr pt ht hr ot et", " hl dh th tl ph hh he ol el",
+		" mi mm ni pi fi ai zi yi ri qi mc dc tc td pc hc hd oc ec", " mc dc tc td pc hc hd oc ec", " q is tt tr pt ht hr ot et", " hl dh th tl ph hh he ol el",
 		" kq mq gq tq pq eq zq yq rq qq hk dk tk td pk ek zk yk nk ik ike ikd ikt itr ikp iex ikz iky ikr", " e d t tr p ex z y r", " dk ik to td po eo zo yo no", " hu bu tu tv pu eu zu yu nu",
 		" kj mj gj aj lj fj jj sj bj gp gm sp vj mp pj gg kp oj pp hj", " gp gm bp gb ab lb fb jb sb bb", " hb mb gub aub lub fub jub sub bub",
 		" hz oz nz dz uz ez fz sz bz", " gz ay hy ky py sy px ny zy", " aw bw gw dw tw iw kw lw sw",
@@ -464,10 +464,10 @@ function cs(illion, c = false) {
 		}
 	}
 	function getT2(t2, d = false) {
-		if (d ? false : t2.lt("30")) {
+		if (d ? false : t2.lt("20")) {
 			return r[4][t2.toNumber()];
 		} else if (t2.lt("1e3")) {
-			return `${t2.mod("100").lt("30") && t2.mod("100").gt("10") ? r[4][t2.mod("100").toNumber()] : `${r[5][rnd(0, 0, t2)]}${t2.mod("100").eq("10") ? "qi" : r[6][rnd(1, 0, t2)]}`}${r[7][rnd(2, 0, t2)]}`;
+			return `${r[5][rnd(0, 0, t2)]}${t2.mod("100").eq("10") ? "qi" : r[6][rnd(1, 0, t2)]}${r[7][rnd(2, 0, t2)]}`;
 		} else {
 			const s2 = [];
 	 	 let l2 = t2.log10().div("3").floor(), tier3ill = l2;
