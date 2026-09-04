@@ -652,9 +652,10 @@ function abbrevN(n, func, config) {
 			} else {
 				let er = new Decimal("10").pow(new Decimal(config.decimals).sub(n.log10().floor().mod(BASELOG)));
 				let mantissa = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(er).floor().div(er);
-				let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
 				// idk bro
-				return `${config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/(?:\.|0+)$/, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/(?:\.|0+)$/, "")}${sep}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
+				let mantissaDisp = config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/\.0+$/g, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/\.0+$/g, "");
+				let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
+				return `${mantissaDisp}${sep}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
 			}
 		}
 	}
@@ -670,12 +671,15 @@ function fmt(f, df) {
 }
 return {
 	GrandButtonIncrementalStandard: {
+		name: "Grand Button Incremental",
 		format: gbiAbbreviate
 	},
 	True179ucStandard: {
+		name: "True 179uc notation",
 		format: fmt(_179uc, {max: "1e60003"})
 	},
 	OldSetsumiStandard: {
+		name: "Old setsumi's standard notation",
 		format: fmt(ossn, {separator: function(n) {
 			if (n.gte("1e33")) {
 				return " "
@@ -684,36 +688,47 @@ return {
 		}, truncLeft: true, maxChars: 55})
 	},
 	VectorStandard: {
+		name: "Vector's standard",
 		format: fmt(vsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
 	},
 	NewVectorStandard: {
+		name: "New vector's standard",
 		format: fmt(nvsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
 	},
 	Ultimer: {
+		name: "Diamond's notation",
 		format: fmt(un, {separator: " ", max: "1e3e3e9"})
 	},
 	MergingLegendsStandard: {
+		name: "Merging Legends",
 		format: fmt(ml, {separator: " ", min: "1e6", max: "1e1.7976931348623157e308"})
 	},
 	Denutation: {
+		name: "Denutation",
 		format: fmt(dn, {separator: " ", base: "10", min: "10", max: "1e1.7976931348623157e308" /* intentional */, maxChars: Infinity})
 	},
 	CrapStandard: {
+		name: "Shit standard",
 		format: fmt(cs, {separator: " "})
 	},
 	PointsProgressionStandard: {
+		name: "Points Progression",
 		format: ptsprAbbreviate
 	},
 	Mid: {
+		name: "Mid notation",
 		format: midNotationAbbreviate
 	},
 	CrapStandard2: {
+		name: "Shit standard 2",
 		format: fmt(cs2, {separator: " ", max: "1e1.7976931348623157e308", maxChars: Infinity})
 	},
 	CrapStandard2Names: {
+		name: "Shit standard 2 (names)",
 		format: fmt(cs2n, {separator: " ", max: "1e1.7976931348623157e308", maxChars: Infinity})
 	},
 	NullAreaBadNotation: {
+		name: "NullArea's bad notation",
 		format: fmt(nabn, {separator: " ", max: "e3e3e33"})
 	}
 }
