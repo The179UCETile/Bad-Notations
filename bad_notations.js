@@ -537,15 +537,46 @@ function nabn(illion, c = false) {
 	const r = [
     "k M B T Q q S s O N", " U d T Q q S s O N", " De Vi Ti Qag Qqg Sag Spg Ocg Nng", " Ce Dce Trce Qarge Qirge Sxrge Sprge Ocrge Norge",
     " Mi Mcr Na Pc Fem Att Zpt Yct Xon Vec Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " ec Ic Trc Ttc Ptc Hxc Hpc Otc Enc", " Hec Dhc Thc Tthc Phc Hhc Hphc Ochc Ehc",
-    " Ki Meg Gig Ter Pt Ex Zet Yot Xen Dak"
+    " Ki Meg Gig Ter Pt Ex Zet Yot Xen Dak", "By^2 By^Ki By^Meg By^Gig By^Ter By^Pt By^Ex By^Zet By^Yot By^Xen", " Dak Ik Trk Ttrk Ptk Hxk Hpk Otk Enk", " Hot Dhot Thot Tthot Pthot Hxhot Hphot Ochot Enhot",
+		" Kal Mj Gj Ast Lun Ferm Jov Sol Bet Gloc Gax Sup Vers Mult Pyr"
 	].map(a => a.split(" "));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
 	}
 	let nm = illion.toNumber();
 	let td = Decimal.fromNumber;
+	function x(f, f2, sp, t) {
+		const s = [];
+		let l = t.log10().div("3").floor(), tierXill = l;
+		if (l.gte("1e9")) return f2(l);
+		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
+			let j = tierXill.mul("3");
+			let pref = f2(tierXill);
+			if (tierXill.gte("1")) {
+				if (rnd(j, 1, t) != 0) {
+					s.push(`${f(td(rnd(j, 1, t) == 1 ? 0 : rnd(j, 1, t)))}${pref}`);
+				}
+			} else {
+				let st = f(td(rnd("0", 1, t)));
+				if (st !== "") {
+					s.push(st);
+				}
+			};
+			tierXill = tierXill.sub("1");
+		};
+		return s.join(sp)
+	}
+	function getT4(t4) {
+		return r[12][t4.toNumber()];
+	}
 	function getT3(t3) {
-		return r[8][t3.toNumber()];
+		if (t3.lt("11")) {
+			return r[8][t3.toNumber()];
+		} else if (t3.lt("1e3")) {
+			return `${r[11][rnd("2", 0, t3)]}${r[10][rnd("1", 0, t3)]}${r[9][rnd("0", 0, t3)]}`;
+		} else {
+			return x(getT3, getT4, "\"", t3);
+		}
 	}
 	function getT2(t2, d = false) {
 		if (d ? false : t2.lt("20")) {
@@ -615,14 +646,15 @@ function abbrevN(n, func, config) {
 			return ""
 		}
 		*/
-		truncLeft: false,					 // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
-		maxChars: 50,							 // Maximum amount of characters before truncating.
-		max: "Infinity",						// Maximum number to use standard.
-		isPrecision: true,					// If true, the number will use .toPrecision() instead of .toFixed().
-		decimals: 3,								// Amount of decimals. Do not set this below 0 (or 3 if config.isPrecision is true).
-		min: "1e3",								 // Minimum number to use standard.
-		base: "1000",							 // The logarithm base to determine the illion number. Only used for Denutation.
-		fallbackNotation: formatSci // Fallback notation to use if max < number.
+		truncLeft: false,                       // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
+		maxChars: 50,                           // Maximum amount of characters before truncating.
+		max: "Infinity",                        // Maximum number to use standard.
+		isPrecision: true,                      // If true, the number will use .toPrecision() instead of .toFixed().
+		decimals: 3,                            // Amount of decimals. Do not set this below 0 (or 3 if config.isPrecision is true).
+		min: "1e3",                             // Minimum number to use standard.
+		base: "1000",                           // The logarithm base to determine the illion number. Only used for Denutation.
+		fallbackNotation: formatSci,            // Fallback notation to use if max < number.
+		removeMantissaMin: "1e9007199254740991" // Minimum number to omit the mantissa.
 	};
 	for (let i in defaults) {
 		config[i] = config[i] ?? defaults[i];
@@ -655,7 +687,7 @@ function abbrevN(n, func, config) {
 				// idk bro
 				let mantissaDisp = config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/\.0+$/g, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/\.0+$/g, "");
 				let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
-				return `${mantissaDisp}${sep}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
+				return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
 			}
 		}
 	}
@@ -729,7 +761,7 @@ return {
 	},
 	NullAreaBadNotation: {
 		name: "NullArea's bad notation",
-		format: fmt(nabn, {separator: " ", max: "e3e3e33"})
+		format: fmt(nabn, {separator: " ", max: "(e^3)3e48"})
 	}
 }
 
