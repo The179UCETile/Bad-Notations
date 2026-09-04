@@ -631,6 +631,20 @@ function nabn(illion, c = false) {
 		return s.join("-");
 	}
 }
+function infr(illion) {
+	const r = [
+		"K M B T Q",
+		"a b c d e f g h i j k l m n o p q r s t u v w x y z",
+		" A B C D E F G H I J K L M N O P Q R S T U V W X Y Z ? ! @ # $ % ^ & * -- ++ == {} [] :: \"\" || << >> // ~~ \\\\ " +
+		"α β γ δ ε Ζ η θ ι κ λ μ ν ξ ο π ρ Σ τ υ φ χ ψ ω Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ Ⅵ Ⅶ Ⅷ Ⅸ Ⅹ ;() :) XD xo :P Ins Del Home End PgUp PgDn FN CTRL ALT SFT ESC NumLk CapLk ScrLk F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 " +
+		"あ い う え お か き く け こ さ し す せ そ た ち つ て と な に ぬ ね の は ひ ふ へ ほ ま み む め も や ゆ よ ら り る れ ろ わ を ん ア イ ウ エ オ カ キ ク ケ コ サ シ ス セ ソ タ チ ツ テ ト ナ 二 ヌ ネ ノ ハ ヒ フ ヘ ホ マ 三 ム メ モ ラ リ ル レ ロ ヤ ユ ヨ ワ ヲ ン"
+	].map(a => a.split(" "));
+	if (illion.lt(5)) {
+		return r[0][illion.toNumber()]
+	} else {
+		return `${r[1][illion.sub(5).mod(26).toNumber()]}${r[2][Math.floor(illion.sub(5).div(26).toNumber())]}`
+	}
+}
 function abbrevN(n, func, config) {
 	if (n.sign == -1) {
 		return `-${abbrevN(n.neg(), func, config)}`;
@@ -762,6 +776,10 @@ return {
 	NullAreaBadNotation: {
 		name: "NullArea's bad notation",
 		format: fmt(nabn, {separator: " ", max: "(e^3)3e48"})
+	},
+	Infiroad: {
+		name: "Infiroad",
+		format: fmt(infr, {max: "1e16084"})
 	}
 }
 
