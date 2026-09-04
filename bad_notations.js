@@ -699,7 +699,15 @@ function abbrevN(n, func, config) {
 				let er = new Decimal("10").pow(new Decimal(config.decimals).sub(n.log10().floor().mod(BASELOG)));
 				let mantissa = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(er).floor().div(er);
 				// idk bro
-				let mantissaDisp = config.isPrecision ? mantissa.toString().slice(0, Number(config.decimals) + 1).replace(/[.0]+$/g, "") : new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2).replace(/[.0]+$/g, "");
+				let mantissaDisp = "";
+				if (config.isPrecision) {
+					mantissaDisp = mantissa.toString().slice(0, Number(config.decimals) + 1);
+				} else {
+					mantissaDisp = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2);
+				};
+				if (/\./.test(mantissaDisp)) {
+					mantissaDisp = mantissaDisp.replace(/\.?0*/, "");
+				};
 				let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
 				return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
 			}
