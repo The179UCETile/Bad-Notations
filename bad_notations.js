@@ -747,7 +747,7 @@ function rcs(illion, c = false) {
 	if (illion.lt("10")) {
 		return r[c ? 1 : 0][nm];
 	} else if (illion.lt("1e4")) {
-		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}${r[4][rnd("3")]}`;
+		return `${r[4][rnd("3")]}${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
 		let l = illion.log10().div("4").floor(), tier2ill = l, s = "";
 		if (l.gte("1e9")) return getT2(l);
