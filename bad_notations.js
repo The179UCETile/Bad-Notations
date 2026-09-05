@@ -655,9 +655,9 @@ function vdn(illion, c = false) {
 	function getT2(d) {
     let st = "";
     for (let i = 0; i < r[5].length; i++) {
-        if (d.div(2 ** i).floor().mod(2).eq(1)) {
-            st += r[5][i];
-        }
+      if (d.div(2 ** i).floor().mod(2).eq(1)) {
+        st += r[5][i];
+      }
     };
     return st
 	}
@@ -677,6 +677,89 @@ function vdn(illion, c = false) {
 				}
 			} else {
 				let st = vdn(td(rnd("0", 1)), 1);
+				if (st !== "") {
+					s += st;
+				}
+			};
+			tier2ill = tier2ill.sub("1");
+		};
+		return s;
+	}
+}
+function rcs(illion, c = false) {
+	const r = ["k M B T q Q s S O N", " u d t q Q s S o n", " D V Tg qg Qg sg Sg Og Ng", " C De Te qe Qe se Se Oe Ne", " Mi Dl Tl ql Ql sl Sl Ol Nl",
+		" α β γ δ ε ζ η θ ι", " κ λ μ ν ξ ο π ρ σ", " τ υ φ χ ψ ω ϱ ϸ ϟ", " 'α 'β 'γ 'δ 'ε 'ζ 'η 'θ 'ι",
+		" а б в г д е ж з и", " й к л м н о п р с", " т у ф х ц ч ш щ ь", " 'а 'б 'в 'г 'д 'е 'ж 'з 'и"].map(a => a.split(" "));
+	function rnd(d, m = false, n = illion) {
+		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e4" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	let td = Decimal.fromNumber;
+	function x(d, func, sep) {
+    const st = [];
+		let highest = d.log(2).floor().max(0).add(1), highestR = d.log(2).floor().max(0), len = highestR.gte("1e9") ? 1 : highestR.gte("1e4") ? 5 : 10; // incase of precision loss
+		if (len == 1) return func(highestR);
+    for (let i = 0; i < len; i++) {
+			let i2 = td(i).sub(len).add(highest).floor();
+      if (d.div(Decimal.pow(2, i2).floor()).floor().mod(2).eq(1)) {
+        st.push(func(i2.add(1).floor()));
+      }
+    };
+    return st.join(sep)
+	}
+	function x2(f, f2, sp, t) {
+		const s = [];
+		let l = t.log10().div("4").floor(), tierXill = l;
+		if (l.gte("1e9")) return f2(l);
+		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
+			let j = tierXill.mul("4");
+			let pref = f2(tierXill);
+			if (tierXill.gte("1")) {
+				if (rnd(j, 1, t) != 0) {
+					s.push(`${f(td(rnd(j, 1, t) == 1 ? 0 : rnd(j, 1, t)))}${pref}`);
+				}
+			} else {
+				let st = f(td(rnd("0", 1, t)));
+				if (st !== "") {
+					s.push(st);
+				}
+			};
+			tierXill = tierXill.sub("1");
+		};
+		return s.join(sp)
+	}
+	function getT3Sep(d) {
+		return `${r[9][rnd("0", 0, d)]}${r[10][rnd("1", 0, d)]}${r[11][rnd("2", 0, d)]}${r[12][rnd("3", 0, d)]}`;
+	}
+	function getT3(d) {
+		return x(d, getT3Sep, "=");
+	}
+	function getT2Sep(d) {
+		if (d.lt("1e4")) {
+			return `${r[5][rnd("0", 0, d)]}${r[6][rnd("1", 0, d)]}${r[7][rnd("2", 0, d)]}${r[8][rnd("3", 0, d)]}`;
+		} else {
+			return x2(getT2Sep, getT3, "", d)
+		}
+	}
+	function getT2(d) {
+		return x(d, getT2Sep, "-")
+	}
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1e4")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}${r[4][rnd("3")]}`;
+	} else {
+		let l = illion.log10().div("4").floor(), tier2ill = l, s = "";
+		if (l.gte("1e9")) return getT2(l);
+		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
+			let j = tier2ill.mul("4");
+			let pref = getT2(tier2ill);
+			if (tier2ill.gte("1")) {
+				if (rnd(j, 1) != 0) {
+					s += `${rcs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`;
+				}
+			} else {
+				let st = rcs(td(rnd("0", 1)), 1);
 				if (st !== "") {
 					s += st;
 				}
@@ -833,6 +916,10 @@ return {
 	VortexDream: {
 		name: "Vortex dream notation",
 		format: fmt(vdn, {max: "e3e131072"})
+	},
+	RichardCrapStandard: {
+		name: "Richard's shit standard",
+		format: fmt(rcs, {max: "eeee3.9901262338e3010"})
 	}
 }
 
