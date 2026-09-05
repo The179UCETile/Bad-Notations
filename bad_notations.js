@@ -645,6 +645,47 @@ function infr(illion) {
 		return `${r[1][illion.sub(5).mod(26).toNumber()]}${r[2][Math.floor(illion.sub(5).div(26).toNumber())]}`
 	}
 }
+function vdn(illion, c = false) {
+	const r = ["k M B Tr Qa Qi Se Sp Oc No", " U D Tr Qa Qi Se Sp Oc Nv", " б Ш Э Ь Ъ Й Д Ж Я", " ζ β Ψ Δ Γ η Λ Θ Σ", " s o i f h c l p q", "$ & @ # * ^ % ? ! ( ) [ ] { }"].map(a => a.split(" "));
+	function rnd(d, m = false) {
+		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e4" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	let td = Decimal.fromNumber;
+	function getT2(d) {
+    let st = "";
+    for (let i = 0; i < r[5].length; i++) {
+        if (d.div(2 ** i).floor().mod(2).eq(1)) {
+            st += r[5][i];
+        }
+    };
+    return st
+	}
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1e4")) {
+		return `${r[4][rnd("3")]}${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else {
+		let l = illion.log10().div("4").floor(), tier2ill = l, s = "";
+		if (l.gte("1e9")) return getT2(l);
+		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
+			let j = tier2ill.mul("4");
+			let pref = getT2(tier2ill);
+			if (tier2ill.gte("1")) {
+				if (rnd(j, 1) != 0) {
+					s += `${vdn(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`;
+				}
+			} else {
+				let st = vdn(td(rnd("0", 1)), 1);
+				if (st !== "") {
+					s += st;
+				}
+			};
+			tier2ill = tier2ill.sub("1");
+		};
+		return s;
+	}
+}
 function abbrevN(n, func, config) {
 	if (n.sign == -1) {
 		return `-${abbrevN(n.neg(), func, config)}`;
@@ -788,6 +829,10 @@ return {
 	Infiroad: {
 		name: "Infiroad",
 		format: fmt(infr, {max: "1e16084"})
+	},
+	VortexDream: {
+		name: "Vortex dream notation",
+		format: fmt(vdn, {max: "e3e131072"})
 	}
 }
 
