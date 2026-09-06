@@ -228,7 +228,8 @@ function cs2(illion, c = false) {
 	}
 }
 function cs2n(illion, c = false) {
-	const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deca icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta nonconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septecenti octocenti noncenti", " mi bili trili quadra penta hexa septe octo nona", " deca icosi triconta quaconta penconta hexconta seconta oconta noconta", " centi bicenti tricenti quacenti pencenti hexcenti sepcenti occenti nocenti"].map(a => a.split(" "));
+	const r = ["k mi bi tri quadra penta hexta septa octa nona", " mi bi tri quadra penta hexta septa octa nova", " deca icosi triaconta quadraconta pentaconta hexaconta septaconta octaconta nonconta", " centi bicenti tricenti quadracenti pentacenti hexicenti septecenti octocenti noncenti",
+		"ili mi bili trili quadra penta hexa septe octo nona", " deca icosi triconta quaconta penconta hexconta seconta oconta noconta", " centi bicenti tricenti quacenti pencenti hexcenti sepcenti occenti nocenti"].map(a => a.split(" "));
 	let il = "";
 	function rnd(d, m = false) {
 		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -237,7 +238,7 @@ function cs2n(illion, c = false) {
 	if (illion.lt("10")) {
 		il = nm == 0 ? "thousand" : (c && nm == 0 ? "thousand" : r[c ? 4 : 0][nm]);
 	} else if (illion.lt("1e3")) {
-		il = `${r[c ? 6 : 3][rnd("2")]}${r[c ? 5 : 2][rnd("1")]}${r[c ? 4 : 1][rnd("0")]}`;
+		il = `${r[c ? 6 : 3][rnd("2")]}${r[c ? 5 : 2][rnd("1")]}${r[c ? 4 : 1][rnd("0")]}`.replace(/[aeiou]i/g, "i");
 	} else {
 		const arr = [];
 		let l = Math.floor(Math.log10(nm) / 3);
