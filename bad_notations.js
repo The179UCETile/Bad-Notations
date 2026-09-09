@@ -750,24 +750,25 @@ function rcs(illion, c = false) {
 	} else if (illion.lt("1e4")) {
 		return `${r[4][rnd("3")]}${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = illion.log10().div("4").floor(), tier2ill = l, s = "";
+		const s = [];
+		let l = illion.log10().div("4").floor(), tier2ill = l;
 		if (l.gte("1e9")) return getT2(l);
 		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
 			let j = tier2ill.mul("4");
 			let pref = getT2(tier2ill);
 			if (tier2ill.gte("1")) {
 				if (rnd(j, 1) != 0) {
-					s += `${rcs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`;
+					s.push(`${rcs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
 				}
 			} else {
 				let st = rcs(td(rnd("0", 1)), 1);
 				if (st !== "") {
-					s += st;
+					s.push(st);
 				}
 			};
 			tier2ill = tier2ill.sub("1");
 		};
-		return s;
+		return s.join("~");
 	}
 }
 function abbrevN(n, func, config) {
