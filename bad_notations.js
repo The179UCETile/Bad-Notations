@@ -881,7 +881,7 @@ return {
 	},
 	MergingLegendsStandard: {
 		name: "Merging Legends",
-		format: fmt(ml, {separator: " ", min: "1e6", max: "1e1.7976931348623157e308"})
+		format: fmt(ml, {separator: " ", min: "1e6", max: "1e1.7976931348623157e308", decimals: 4})
 	},
 	Denutation: {
 		name: "Denutation",
