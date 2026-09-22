@@ -1,5 +1,5 @@
 var BadNotations = (function () {
-	
+
 function gbi(illion) {
 	const pref = {
 		ones: {
@@ -771,6 +771,29 @@ function rcs(illion, c = false) {
 		return s.join("~");
 	}
 }
+function bcgiinas(illion, c = false) {
+	const r = ["t I L O Ad Ai Ex Ep Ct On", "N U L O Ad Ai Ex Ep Ct On", " Cd Gi Re Dr Dg Sx Sp Ot Gn", " Cc Dd Tt Qq Qc Ss Sc Fc Nc", " Il Mi Nl Pi Al Em Pt Yo"].map(a => a.split(" "));
+	function rnd(d, m = false) {
+		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1e3")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else {
+		let l = Math.floor(Math.log10(illion) / 3), s = "";
+		for (let i = l; i >= 0; i--) {
+			let j = i * 3;
+			if (i >= 1) {
+				s += rnd(j.toString(), 1) ? `${bcgiinas(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
+			} else {
+				s += bcgiinas(Decimal.fromNumber(rnd("0", 1)), 1);
+			};
+		};
+		return s;
+	}
+}
 function abbrevN(n, func, config) {
 	if (n.sign == -1) {
 		return `-${abbrevN(n.neg(), func, config)}`;
@@ -919,9 +942,13 @@ return {
 		name: "Vortex dream notation",
 		format: fmt(vdn, {max: "e3e131072"})
 	},
-	RichardCrapStandard: {
-		name: "Richard's shit standard",
+	BlueNekoCrapStandard: {
+		name: "blue.neko's shit standard",
 		format: fmt(rcs, {max: "eeee3.9901262338e3010"})
+	},
+	BzukiConfusionGrammarIIsNotAreStandard: {
+		name: "Bzuki's confusion grammar i is not are standard",
+		format: fmt(bcgiinas, {max: "e3e27", decimals: 4})
 	}
 }
 
