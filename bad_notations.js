@@ -782,14 +782,17 @@ function bcgiinas(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = Math.floor(Math.log10(illion) / 3), s = "";
-		for (let i = l; i >= 0; i--) {
-			let j = i * 3;
-			if (i >= 1) {
-				s += rnd(j.toString(), 1) ? `${bcgiinas(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
+		let l = illion.log10().div("3").floor().toNumber(), s = "";
+		let tier2ill = l, t2id = Decimal.fromNumber(tier2ill);
+		for (let i = 0; i < (l > 6 ? 6 : (l + 1)); i++) {
+			let j = tier2ill * 3;
+			if (tier2ill >= 1) {
+				s += rnd(j.toString(), 1) != 0 ? `${rnd(j.toString(), 1) == 1 ? "" : bcgiinas(Decimal.fromNumber(rnd(j.toString(), 1)))}${r[4][tier2ill]}` : ""
 			} else {
-				s += bcgiinas(Decimal.fromNumber(rnd("0", 1)), 1);
+				s += rnd("0", 1) == 0 ? "" : bcgiinas(Decimal.fromNumber(rnd("0", 1)));
 			};
+			tier2ill--;
+			t2id = Decimal.fromNumber(tier2ill);
 		};
 		return s;
 	}
