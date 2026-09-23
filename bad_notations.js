@@ -10,6 +10,10 @@ function commasplitThing(num, base, lim) {
   while (arr.length < lim && num2.gt("0")) {
     let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
 		if (man.eq("0")) man = new Decimal("1");
+		if (man.gte(base)) {
+			log = log.add(man.log(base)).floor();
+			man = man.div(base.pow(man.log(base).floor())).floor();
+		};
     arr.push([man, log]);
     num2 = num2.sub(man.mul(base.pow(log)));
   };
@@ -701,11 +705,49 @@ function abbrevN(n, func, config) {
 }
 function fmt(f, df) {
 	return function(num, config) {
+		num = new Decimal(num);
 		if (typeof config === "undefined") return abbrevN(num, f, df);
 		for (let i in df) {
 			config[i] = config[i] ?? df[i];
 		};
 		return abbrevN(num, f, config);
+	}
+}
+function defaultsObj(defaults, obj) {
+	if (!(typeof obj == "object")) return defaults;
+	for (let i in defaults) {
+		obj[i] ??= defaults[i]
+	};
+	return obj;
+}
+function pmn(n, config) {
+	n = new Decimal(n).floor();
+	if (Decimal.isNaN(n)) return "NaN";
+	if (n.eq("-Infinity")) return "-Infinity";
+	if (n.eq("Infinity")) return "Infinity";
+	if (n.eq("0")) return "0";
+	if (n.lt("0")) {
+		return `-${pmn(n.neg())}`
+	};
+	config = defaultsObj({
+		maxChars: 100,      // Maximum amount of characters before truncating.
+		maxEntries: 8,      // Maximum amount of entries.
+		tetraMin: "F5",     // Minimum number to use [x]y format
+		base: "10"          // The multiplier between each parenthesis tier.
+	}, config);
+	if (n.lt(config.tetraMin)) {
+		const arr = commasplitThing(n, config.base, config.maxEntries);
+		let s = "";
+		for (let i of arr) {
+			if (i[1].eq("0")) {
+				s += i[0];
+			} else {
+				s += `${i[0]}(${pmn(i[1])})`;
+			}
+		};
+		return s.length > config.maxChars ? `${s.slice(0, config.maxChars - 3)}...` : s;
+	} else {
+		return `[${pmn(n.slog(config.base).sub("1"))}]${pmn(Decimal.iteratedexp(config.base, "2", n.slog().mod("1")))}`
 	}
 }
 return {
@@ -785,6 +827,10 @@ return {
 	BzukiConfusionGrammarIIsNotAreStandard: {
 		name: "Bzuki's confusion grammar i is not are standard",
 		format: fmt(bcgiinas, {max: "e3e27", decimals: 4})
+	},
+	ParenthesesMagnitude: {
+		name: "Parentheses magnitude notation",
+		format: pmn
 	}
 }
 
