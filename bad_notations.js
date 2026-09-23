@@ -747,7 +747,7 @@ function pmn(n, config) {
 		};
 		return s.length > config.maxChars ? `${s.slice(0, config.maxChars - 3)}...` : s;
 	} else {
-		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(Decimal.iteratedexp(config.base, "3", n.slog().mod("1")), config)}`
+		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(n.iteratedlog(config.base, n.slog(config.base).sub("2").floor()), config)}`
 	}
 }
 return {
