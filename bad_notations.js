@@ -722,19 +722,19 @@ function defaultsObj(defaults, obj) {
 }
 function pmn(n, config) {
 	n = new Decimal(n).floor();
-	if (Decimal.isNaN(n)) return "NaN";
-	if (n.eq("-Infinity")) return "-Infinity";
-	if (n.eq("Infinity")) return "Infinity";
-	if (n.eq("0")) return "0";
-	if (n.lt("0")) {
-		return `-${pmn(n.neg())}`
-	};
 	config = defaultsObj({
 		maxChars: 100,      // Maximum amount of characters before truncating.
 		maxEntries: 8,      // Maximum amount of entries.
 		tetraMin: "F6",     // Minimum number to use [x]y format
 		base: "10"          // The multiplier between each parenthesis tier.
 	}, config);
+	if (Decimal.isNaN(n)) return "NaN";
+	if (n.eq("-Infinity")) return "-Infinity";
+	if (n.eq("Infinity")) return "Infinity";
+	if (n.eq("0")) return "0";
+	if (n.lt("0")) {
+		return `-${pmn(n.neg(), config)}`
+	};
 	if (n.lt(config.tetraMin)) {
 		const arr = commasplitThing(n, config.base, config.maxEntries);
 		let s = "";
@@ -742,12 +742,12 @@ function pmn(n, config) {
 			if (i[1].eq("0")) {
 				s += i[0];
 			} else {
-				s += `${i[0]}(${pmn(i[1])})`;
+				s += `${i[0]}(${pmn(i[1], config)})`;
 			}
 		};
 		return s.length > config.maxChars ? `${s.slice(0, config.maxChars - 3)}...` : s;
 	} else {
-		return `[${pmn(n.slog(config.base).sub("2"))}]${pmn(Decimal.iteratedexp(config.base, "3", n.slog().mod("1")))}`
+		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(Decimal.iteratedexp(config.base, "3", n.slog().mod("1")), config)}`
 	}
 }
 return {
