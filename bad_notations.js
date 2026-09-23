@@ -732,7 +732,7 @@ function pmn(n, config) {
 	config = defaultsObj({
 		maxChars: 100,      // Maximum amount of characters before truncating.
 		maxEntries: 8,      // Maximum amount of entries.
-		tetraMin: "F5",     // Minimum number to use [x]y format
+		tetraMin: "F6",     // Minimum number to use [x]y format
 		base: "10"          // The multiplier between each parenthesis tier.
 	}, config);
 	if (n.lt(config.tetraMin)) {
