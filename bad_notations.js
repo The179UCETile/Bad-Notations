@@ -1,5 +1,46 @@
 var BadNotations = (function () {
 
+function commasplitThing(num, base, lim) {
+  num = new Decimal(num);
+  base = new Decimal(base);
+  const arr = [];
+  let num2 = num;
+  if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
+  if (num.gte("e9e15")) lim = 1; // precision loss
+  while (arr.length < lim && num2.gt("0")) {
+    let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
+		if (man.eq("0")) man = new Decimal("1");
+    arr.push([man, log]);
+    num2 = num2.sub(man.mul(base.pow(log)));
+  };
+  return arr;
+}
+function tierer(num, cur, next, sep, base = "1e3") {
+	if (num.lt(base)) return cur(num);
+	const arr = commasplitThing(num, base, 6);
+	const s = [];
+	for (let i of arr) {
+		if (i[1].eq("0")) {
+      s.push(cur(i[0]));
+		} else {
+			s.push(`${i[0].gt("1") ? cur(i[0]) : ""}${next(i[1])}`);
+		}
+	};
+	return s.join(sep);
+}
+function tierer2(num, cur, next, sep, base = "1e3") { // for tier 2 specifically
+	if (num.lt(base)) return cur(num);
+	const arr = commasplitThing(num, base, 6);
+	const s = [];
+	for (let i of arr) {
+		if (i[1].eq("0")) {
+      s.push(cur(i[0], 1));
+		} else {
+			s.push(`${i[0].gt("1") ? cur(i[0], 1) : ""}${next(i[1])}`);
+		}
+	};
+	return s.join(sep);
+}
 function gbi(illion) {
 	const pref = {
 		ones: {
@@ -149,6 +190,7 @@ function ossn(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${nm % 100 == 10 ? "Dec" : rnd("1") == 4 && nm > 100 ? "Qag" : r[2][rnd("1")]}${r[c ? 4 : 3][rnd("2")]}` // handle 1e1940 case
 	} else if (Decimal.pow("1e3", illion.add("1")).log10().lt("1.7976931348623157e308")) {
+		// i'm not making tierer3 for this
 		let l = Math.floor(Math.log10(nm) / 3), s = "";
 		for (let i = (l > 6 ? l - 6 : 0); i <= l; i++) {
 			let j = i * 3;
@@ -267,16 +309,7 @@ function vsn(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = Math.floor(Math.log10(nm) / 3), s = "";
-		for (let i = l; i >= 0; i--) {
-			let j = i * 3;
-			if (i >= 1) {
-				s += rnd(j, 1) ? `${vsn(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
-			} else {
-				s += vsn(illion.mod("1e3"), 1);
-			}
-		};
-		return s;
+		return tierer2(illion, vsn, d => r[4][d.toNumber()], "")
 	}
 }
 function nvsn(illion, c = false) {
@@ -290,16 +323,7 @@ function nvsn(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = Math.floor(Math.log10(nm) / 3), s = "";
-		for (let i = l; i >= 0; i--) {
-			let j = i * 3;
-			if (i >= 1) {
-				s += rnd(j, 1) ? `${nvsn(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
-			} else {
-				s += nvsn(illion.mod("1e3"), 1);
-			}
-		};
-		return s;
+		return tierer2(illion, nvsn, d => r[4][d.toNumber()], "")
 	}
 }
 function un(illion) {
@@ -345,16 +369,7 @@ function ml(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[3][rnd("2")]}${r[1][rnd("0")]}${r[2][rnd("1")]}`;
 	} else {
-		let l = Math.floor(Math.log10(illion) / 3), s = "";
-		for (let i = l; i >= 0; i--) {
-			let j = i * 3;
-			if (i >= 1) {
-				s += rnd(j.toString(), 1) ? `${ml(Decimal.fromNumber(rnd(j.toString(), 1) == 1 ? 0 : rnd(j.toString(), 1)), 1)}${r[4][i]}` : "";
-			} else {
-				s += ml(Decimal.fromNumber(rnd("0", 1)), 1);
-			};
-		};
-		return s;
+		return tierer2(illion, ml, d => r[4][d.toNumber()], "")
 	}
 }
 function cs(illion, c = false) {
@@ -375,27 +390,6 @@ function cs(illion, c = false) {
 	}
 	let nm = illion.toNumber();
 	let td = Decimal.fromNumber;
-	function x(f, f2, sp, t) {
-		const s = [];
-		let l = t.log10().div("3").floor(), tierXill = l;
-		if (l.gte("1e9")) return f2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tierXill.mul("3");
-			let pref = f2(tierXill);
-			if (tierXill.gte("1")) {
-				if (rnd(j, 1, t) != 0) {
-					s.push(`${f(td(rnd(j, 1, t) == 1 ? 0 : rnd(j, 1, t)))}${pref}`);
-				}
-			} else {
-				let st = f(td(rnd("0", 1, t)));
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tierXill = tierXill.sub("1");
-		};
-		return s.join(sp)
-	}
 	function getT10(t10) {
 		return `${r[32][rnd("2", 0, t10)]}${r[31][rnd("1", 0, t10)]}${r[30][rnd("0", 0, t10)]}`;
 	}
@@ -407,14 +401,14 @@ function cs(illion, c = false) {
 		} else if (t9.lt("1e3")) {
 			return `${getT9(t9.mod("100"))}${r[29][rnd("2", 0, t9)]}`
 		} else {
-			return x(getT9, getT10, "⊷", t9)
+			return tierer(t9, getT9, getT10, "⊷")
 		}
 	}
 	function getT8(t8) {
 		if (t8.lt("1e3")) {
 			return `${r[24][rnd("0", 0, t8)]}${r[25][rnd("1", 0, t8)]}${r[26][rnd("2", 0, t8)]}`;
 		} else {
-			return x(getT8, getT9, "∀", t8);
+			return tierer(t8, getT8, getT9, "∀");
 		}
 	}
 	function getT7(t7) {
@@ -425,7 +419,7 @@ function cs(illion, c = false) {
 		} else if (t7.lt("1e3")) {
 			return `${getT7(t7.mod("100"))}${r[23][rnd("2", 0, t7)]}`
 		} else {
-			return x(getT7, getT8, "%", t7)
+			return tierer(t7, getT7, getT8, "%")
 		}
 	}
 	function getT6(t6) {
@@ -436,14 +430,14 @@ function cs(illion, c = false) {
 		} else if (t6.lt("1e3")) {
 			return `${r[20][rnd("2", 0, t6)]}${getT6(t6.mod("100"))}`
 		} else {
-			return x(getT6, getT7, "§", t6)
+			return tierer(t6, getT6, getT7, "§")
 		}
 	}
 	function getT5(t5) {
 		if (t5.lt("1e3")) {
 			return `${r[17][rnd("2", 0, t5)]}${r[16][rnd("1", 0, t5)]}${r[15][rnd("0", 0, t5)]}`;
 		} else {
-			return x(getT5, getT6, "€", t5);
+			return tierer(t5, getT5, getT6, "€");
 		}
 	}
 	function getT4(t4) {
@@ -452,7 +446,7 @@ function cs(illion, c = false) {
 		} else if (t4.lt("1e3")) {
 			return `${r[14][rnd("2", 0, t4)]}${t4.mod("100").lt("20") && t4.mod("100").gt("10") ? r[12][t4.mod("100").toNumber()] : `${r[13][rnd("1", 0, t4)]}${r[12][rnd("0", 0, t4)]}`}`;
 		} else {
-			return x(getT4, getT5, "!", t4);
+			return tierer(t4, getT4, getT5, "!");
 		}
 	}
 	function getT3(t3) {
@@ -461,34 +455,16 @@ function cs(illion, c = false) {
 		} else if (t3.lt("1e3")) {
 			return `${r[11][rnd("2", 0, t3)]}${t3.mod("100").lt("30") && t3.mod("100").gt("10") ? r[8][t3.mod("100").toNumber()] : `${r[10][rnd("1", 0, t3)]}${r[9][rnd("0", 0, t3)]}`}`;
 		} else {
-			return x(getT3, getT4, "?", t3);
+			return tierer(t3, getT3, getT4, "?");
 		}
 	}
-	function getT2(t2, d = false) {
-		if (d ? false : t2.lt("20")) {
+	function getT2(t2) {
+		if (t2.lt("20")) {
 			return r[4][t2.toNumber()];
 		} else if (t2.lt("1e3")) {
 			return `${r[5][rnd(0, 0, t2)]}${t2.mod("100").eq("10") ? "qi" : r[6][rnd(1, 0, t2)]}${r[7][rnd(2, 0, t2)]}`;
 		} else {
-			const s2 = [];
-	 	 let l2 = t2.log10().div("3").floor(), tier3ill = l2;
-			if (l2.gte("1e9")) return getT3(l2);
-	 	 for (let i2 = 0; i2 < (l2.gte("1e9") ? 1 : l2.gte("1e3") ? 2 : l2.gte("6") ? 6 : l2.add("1").toNumber()); i2++) {
-				let j2 = tier3ill.mul("3");
-				let pref2 = getT3(tier3ill);
-				if (tier3ill.gte("1")) {
-					if (rnd(j2, 1, t2) != 0) {
-						s2.push(`${getT2(td(rnd(j2, 1, t2) == 1 ? 0 : rnd(j2, 1, t2)))}${pref2}`);
-					}
-				} else {
-					let st = getT2(td(rnd("0", 1, t2)), 1);
-					if (st !== "") {
-						s2.push(st);
-					}
-				};
-				tier3ill = tier3ill.sub("1");
-			};
-			return s2.join("&");
+			return tierer(t2, getT2, getT3, "&")
 		}
 	}
 	if (illion.lt("10")) {
@@ -496,25 +472,7 @@ function cs(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else if (illion.lt("(e^9)3e3")) {
-		const s = [];
-		let l = illion.log10().div("3").floor(), tier2ill = l;
-		if (l.gte("1e9")) return getT2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tier2ill.mul("3");
-			let pref = getT2(tier2ill);
-			if (tier2ill.gte("1")) {
-				if (rnd(j, 1) != 0) {
-					s.push(`${cs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
-				}
-			} else {
-				let st = cs(td(rnd("0", 1)), 1);
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tier2ill = tier2ill.sub("1");
-		};
-		return s.join("-");
+		return tierer2(illion, cs, getT2, "-");
 	} else if (illion.lt("F4.5e15")) {
 		let tt = illion.iteratedlog("1e3", illion.slog("1e3").floor()), tt2 = Decimal.pow("1e3", tt.mod("1")), ttn = tt.toNumber(), tier = illion.slog("1e3").floor().add("1");
 		const s = [];
@@ -546,27 +504,6 @@ function nabn(illion, c = false) {
 	}
 	let nm = illion.toNumber();
 	let td = Decimal.fromNumber;
-	function x(f, f2, sp, t) {
-		const s = [];
-		let l = t.log10().div("3").floor(), tierXill = l;
-		if (l.gte("1e9")) return f2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tierXill.mul("3");
-			let pref = f2(tierXill);
-			if (tierXill.gte("1")) {
-				if (rnd(j, 1, t) != 0) {
-					s.push(`${f(td(rnd(j, 1, t) == 1 ? 0 : rnd(j, 1, t)))}${pref}`);
-				}
-			} else {
-				let st = f(td(rnd("0", 1, t)));
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tierXill = tierXill.sub("1");
-		};
-		return s.join(sp)
-	}
 	function getT4(t4) {
 		return r[12][t4.toNumber()];
 	}
@@ -576,7 +513,7 @@ function nabn(illion, c = false) {
 		} else if (t3.lt("1e3")) {
 			return `${r[11][rnd("2", 0, t3)]}${r[10][rnd("1", 0, t3)]}${r[9][rnd("0", 0, t3)]}`;
 		} else {
-			return x(getT3, getT4, "\"", t3);
+			return tierer(t3, getT3, getT4, "\"");
 		}
 	}
 	function getT2(t2, d = false) {
@@ -585,25 +522,7 @@ function nabn(illion, c = false) {
 		} else if (t2.lt("1e3")) {
 			return `${r[5][rnd(0, 0, t2)]}${t2.mod("100").eq("10") ? "Vec" : r[6][rnd(1, 0, t2)]}${r[7][rnd(2, 0, t2)]}`;
 		} else {
-			const s2 = [];
-	 	 let l2 = t2.log10().div("3").floor(), tier3ill = l2;
-			if (l2.gte("1e9")) return getT3(l2);
-	 	 for (let i2 = 0; i2 < (l2.gte("1e9") ? 1 : l2.gte("1e3") ? 2 : l2.gte("6") ? 6 : l2.add("1").toNumber()); i2++) {
-				let j2 = tier3ill.mul("3");
-				let pref2 = getT3(tier3ill);
-				if (tier3ill.gte("1")) {
-					if (rnd(j2, 1, t2) != 0) {
-						s2.push(`${getT2(td(rnd(j2, 1, t2) == 1 ? 0 : rnd(j2, 1, t2)))}${pref2}`);
-					}
-				} else {
-					let st = getT2(td(rnd("0", 1, t2)), 1);
-					if (st !== "") {
-						s2.push(st);
-					}
-				};
-				tier3ill = tier3ill.sub("1");
-			};
-			return s2.join("'");
+			return tierer(t2, getT2, getT3, "'")
 		}
 	}
 	if (illion.lt("10")) {
@@ -611,25 +530,7 @@ function nabn(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		const s = [];
-		let l = illion.log10().div("3").floor(), tier2ill = l;
-		if (l.gte("1e9")) return getT2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tier2ill.mul("3");
-			let pref = getT2(tier2ill);
-			if (tier2ill.gte("1")) {
-				if (rnd(j, 1) != 0) {
-					s.push(`${nabn(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
-				}
-			} else {
-				let st = nabn(td(rnd("0", 1)), 1);
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tier2ill = tier2ill.sub("1");
-		};
-		return s.join("-");
+		return tierer2(illion, nabn, getT2, "-")
 	}
 }
 function infr(illion) {
@@ -667,24 +568,7 @@ function vdn(illion, c = false) {
 	} else if (illion.lt("1e4")) {
 		return `${r[4][rnd("3")]}${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = illion.log10().div("4").floor(), tier2ill = l, s = "";
-		if (l.gte("1e9")) return getT2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tier2ill.mul("4");
-			let pref = getT2(tier2ill);
-			if (tier2ill.gte("1")) {
-				if (rnd(j, 1) != 0) {
-					s += `${vdn(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`;
-				}
-			} else {
-				let st = vdn(td(rnd("0", 1)), 1);
-				if (st !== "") {
-					s += st;
-				}
-			};
-			tier2ill = tier2ill.sub("1");
-		};
-		return s;
+		return tierer2(illion, vdn, getT2, "", "1e4")
 	}
 }
 function rcs(illion, c = false) {
@@ -708,27 +592,6 @@ function rcs(illion, c = false) {
     };
     return st.join(sep)
 	}
-	function x2(f, f2, sp, t) {
-		const s = [];
-		let l = t.log10().div("4").floor(), tierXill = l;
-		if (l.gte("1e9")) return f2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tierXill.mul("4");
-			let pref = f2(tierXill);
-			if (tierXill.gte("1")) {
-				if (rnd(j, 1, t) != 0) {
-					s.push(`${f(td(rnd(j, 1, t) == 1 ? 0 : rnd(j, 1, t)))}${pref}`);
-				}
-			} else {
-				let st = f(td(rnd("0", 1, t)));
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tierXill = tierXill.sub("1");
-		};
-		return s.join(sp)
-	}
 	function getT3Sep(d) {
 		return `${r[9][rnd("0", 0, d)]}${r[10][rnd("1", 0, d)]}${r[11][rnd("2", 0, d)]}${r[12][rnd("3", 0, d)]}`;
 	}
@@ -739,7 +602,7 @@ function rcs(illion, c = false) {
 		if (d.lt("1e4")) {
 			return `${r[5][rnd("0", 0, d)]}${r[6][rnd("1", 0, d)]}${r[7][rnd("2", 0, d)]}${r[8][rnd("3", 0, d)]}`;
 		} else {
-			return x2(getT2Sep, getT3, "", d)
+			return tierer(d, getT2Sep, getT3, "")
 		}
 	}
 	function getT2(d) {
@@ -750,25 +613,7 @@ function rcs(illion, c = false) {
 	} else if (illion.lt("1e4")) {
 		return `${r[4][rnd("3")]}${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		const s = [];
-		let l = illion.log10().div("4").floor(), tier2ill = l;
-		if (l.gte("1e9")) return getT2(l);
-		for (let i = 0; i < (l.gte("1e9") ? 1 : l.gte("1e3") ? 2 : l.gte("6") ? 6 : l.add("1").toNumber()); i++) {
-			let j = tier2ill.mul("4");
-			let pref = getT2(tier2ill);
-			if (tier2ill.gte("1")) {
-				if (rnd(j, 1) != 0) {
-					s.push(`${rcs(td(rnd(j, 1) == 1 ? 0 : rnd(j, 1)), 1)}${pref}`);
-				}
-			} else {
-				let st = rcs(td(rnd("0", 1)), 1);
-				if (st !== "") {
-					s.push(st);
-				}
-			};
-			tier2ill = tier2ill.sub("1");
-		};
-		return s.join("~");
+		return tierer2(illion, rcs, getT2, "~", "1e4")
 	}
 }
 function bcgiinas(illion, c = false) {
@@ -782,19 +627,7 @@ function bcgiinas(illion, c = false) {
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else {
-		let l = illion.log10().div("3").floor().toNumber(), s = "";
-		let tier2ill = l, t2id = Decimal.fromNumber(tier2ill);
-		for (let i = 0; i < (l > 6 ? 6 : (l + 1)); i++) {
-			let j = tier2ill * 3;
-			if (tier2ill >= 1) {
-				s += rnd(j.toString(), 1) != 0 ? `${rnd(j.toString(), 1) == 1 ? "" : bcgiinas(Decimal.fromNumber(rnd(j.toString(), 1)))}${r[4][tier2ill]}` : ""
-			} else {
-				s += rnd("0", 1) == 0 ? "" : bcgiinas(Decimal.fromNumber(rnd("0", 1)));
-			};
-			tier2ill--;
-			t2id = Decimal.fromNumber(tier2ill);
-		};
-		return s;
+		return tierer2(illion, bcgiinas, d => r[4][d.toNumber()], "")
 	}
 }
 function abbrevN(n, func, config) {
@@ -901,7 +734,7 @@ return {
 		name: "New vector's standard",
 		format: fmt(nvsn, {separator: " ", max: new Decimal("1e3e15").mul("1e3")})
 	},
-	Ultimer: {
+	Diamond: {
 		name: "Diamond's notation",
 		format: fmt(un, {separator: " ", max: "1e3e3e9"})
 	},
