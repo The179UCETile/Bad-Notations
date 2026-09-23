@@ -1,8 +1,12 @@
+let doesSupportTemporal = typeof Temporal == "object";
 function format(e) {
-	let decim = new Decimal(e);
+	console.clear();
 	let output = "";
 	for (let i in BadNotations) {
-		output += `${BadNotations[i].name}: ${BadNotations[i].format(decim)}<br>\n`
+		let t = doesSupportTemporal ? Temporal.Now.instant() : performance.now();
+		let fmt = BadNotations[i].format(new Decimal(e));
+		output += `${BadNotations[i].name}: ${fmt}<br>\n`;
+		console.log(`${BadNotations[i].name}: ${fmt} (${doesSupportTemporal ? Temporal.Now.instant().since(t).total("milliseconds") : (performance.now() - t).toFixed(3)}ms)`)
 	}
 	document.getElementById("results").innerHTML = output;
 }
