@@ -54,6 +54,10 @@ function removeTrailingZeros(str) {
 	if (!/\./.test(str)) return str;
 	return str.replace(/0+$/, "").replace(/\.$/, "");
 }
+function truncateString(str, len, left = false) {
+	const s = str.split(/(?:)/u);
+	return s.length > len ? left ? `...${s.slice(s.length - len + 3, s.length).join("")}` : `${s.slice(0, len - 3).join("")}...` : str
+}
 function gbi(illion) {
 	const pref = {
 		ones: {
@@ -691,7 +695,22 @@ function occs(illion, c = false) {
 		" Ɇ Ɗ ƈ ɓ ᶏ Ƶ Ɣ X w", " ⱱ ᴐ ʗ Ꝧ ⱥ ƺ ɏ ᶍ ʬ", " ꟸ Đ Ɔ ꝧ Ꜹ ᴣ Ꟛ Ꭓ ꝡ",
 		" ꭡ Ƌ Ƈ ꟓ ꜻ ʑ Ɤ ꭓ Ꝡ", " ꝟ ᶖ Ȼ 𝼅 Ꜳ ɀ ỿ ꭗ Ⱳ", " 𐞕 ƌ ȼ ꟔ ꜹ ʐ ꝩ ꭖ ꞷ",
 		" ꜷ ₘ ȸ ʋ ᶗ ↅ 𝼂 Ỽ ꞩ", " ↆ Ա ↁ Ⅴ 𝼏 𝼝 Ꞡ ꟒ Ꟊ", " 𐞖 ꭩ ꟈ Ꝟ Ç ç ᶢ ỽ ꟍ",
-		" Ｈ Ǆ ｈ ŧ ⱷ ᵇ ᵐ ϻ ꝓ", " ƚ ᴑ 𝼆 ꞁ 𝼛 Ｂ Ѧ ѩ ᴾ", " Ḣ ǲ ḥ Ꞁ ᵖ ｂ ѧ Ѩ ₚ"
+		" Ｈ Ǆ ｈ ŧ ⱷ ᵇ ᵐ ϻ ꝓ", " ƚ ᴑ 𝼆 ꞁ 𝼛 Ｂ Ѧ ѩ ᴾ", " Ḣ ǲ ḥ Ꞁ ᵖ ｂ ѧ Ѩ ₚ",
+		" Ʂ ꝅ Ꝍ ꞥ Ѭ ꓨ ꭤ 𝼌 ꞹ", " 𐞄 ᶒ ꝋ ꝴ ѫ Ϭ Ⅽ ꭍ Ꞟ", " 𐞗 Ʞ ꝏ Ꞥ ѭ ϭ Ϛ ꟙ ꭎ",
+		" א בּ ג ד ה ו ז ח ט", " Ｇ ｐ גּ דּ הּ וּ זּ 𐡇 טּ", " ң 𐤁 𐤂 𐤃 𐤄 𐤅 𐤆 𐤇 𐤈",
+		" י כ ל מ נ ס ע פ צ", " Ꝇ 𝼩 לּ מּ נּ סּ 𐡏 פּ צּ", " ђ 𐤊 𐤋 𐤌 𐤍 𐤎 𐤏 𐤐",
+		" ק ר ש ת α β γ δ ε", " Ҥ ﬆ שּ תּ ꓯ ꓭ Γ Δ ꝫ", " Ϧ 𐤒 𐤓 𐤔 𐤕 ⲁ ⲃ ⲅ ⲇ ⲉ",
+		" ζ η θ ι κ λ μ ν ξ", " Ϸ 𝼊 ꭧ 𝼚 Қ 𝼍 Ѫ 𝼇 Ξ", " ͱ ⲏ ⲑ ⲓ ⲕ ⲗ ⲙ ⲛ ⲝ",
+		" ϙ π ρ σ τ υ φ χ ψ", " ω ͳ ꓤ Ɜ ꭏ ꓵ Φ ꭔ Ψ", " Ћ ⲡ ⲣ ⲥ ⲧ ⲩ ⲫ ⲭ ⲯ",
+		" Ӎ Ꟃ ⱻ ӎ ᶘ ȿ ʉ ʭ ϼ", " К ƶ ᶓ Щ 𝼕 𝼞 ᵫ ꬻ Ҏ", " Ђ ꟃ ꭢ щ 𝼎 Ϩ ϥ Л ҏ",
+		" 𝐙 𝐘 𝐗 𝐖 𝐕 𝐔 𝐓 𝐒 𝐑", " 𝐳 𝐲 𝐱 𝐰 𝐯 𝐮 𝐭 𝐬 𝐫", " 𝕫 𝕪 𝕩 𝕨 𝕧 𝕦 𝕥 𝕤 𝕣",
+		" 𝐐 𝐏 𝐎 𝐍 𝐌 𝐋 𝐊 𝐉 𝐈", " 𝐪 𝐩 𝐨 𝐧 𝐦 𝐥 𝐤 𝐣 𝐢", " 𝕢 𝕡 𝕠 𝕟 𝕞 𝕝 𝕜 𝕛 𝕚",
+		" 𝐇 𝐆 𝐅 𝐄 𝐃 𝐂 𝐁 𝐀 𝑃", " 𝐡 𝐠 𝐟 𝐞 𝐝 𝐜 𝐛 𝐚 𝑝", " 𝕙 𝕘 𝕗 𝕖 𝕕 𝕔 𝕓 𝕒 𝔭",
+		" ш Ч Π ℙ Ꝼ Ꜻ Ꝝ У 𝼖", " ꞯ ᵻ Ͳ Ϯ ϸ ϧ Њ Ѻ З", " Ԋ ԃ ϯ 𝼗 Ԗ Ӈ ҥ ѻ є",
+		" к Ш ᴳ 𝼜 ꓒ ᶔ ᶚ ꟛ ꝵ", " ꜩ ί ţ Ｔ ԗ ϵ Ⱬ ꭚ Ꞃ", " ꭜ Ѣ ｔ ᶵ Ｐ ϶ ⱬ Ƛ ꝶ",
+		" Ќ ѡ п Ṗ Ꞙ Å Ҭ ү ӷ", " ʠ ᵼ ҭ Ҵ ф Ҕ Ң Ꟁ Є", " ћ ȡ Ԏ ԏ 𝑷 ԋ Ӊ Ҩ ҙ",
+		" ќ ϡ Ϥ 𐞝 𝒑 Ѥ Ɀ ϒ г", " ᶐ İ ҵ ₜ ℘ ѥ ꝝ ϔ Ǌ", " ӈ ѣ 𐞫 𐞮 ℗ ℇ ᶎ ℽ ℿ",
+		" ӄ Ѡ ϑ 𐞬 𝒫 Ԑ ʒ ʏ ʁ", " ℚ ΐ 𐞭 ṱ 𝓅 Э ʓ ұ 𝼔", " Ԩ б ẗ Ṱ 𝓹 ԑ ʡ ϓ ᴎ"
 	].map(a => a.split(" "));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -797,7 +816,7 @@ function abbrevN(n, func, config) {
 				mantissaDisp = mantissaDisp.replace(/\.?0*$/, "");
 			};
 			let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
-			return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
+			return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${truncateString(pref, config.maxChars, config.truncLeft)}`.replace(new RegExp(sep + "$"), "");
 		}
 	}
 }
@@ -928,7 +947,7 @@ return {
 	},
 	OneCharacterCrapStandard: {
 		name: "One character shit standard",
-		format: fmt(occs, {max: "(e^20)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
+		format: fmt(occs, {max: "(e^35)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
