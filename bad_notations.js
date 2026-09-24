@@ -685,16 +685,22 @@ function occs(illion, c = false) {
 		" Ꝃ ｍ ꟑ ꝷ ƿ ɇ Ƹ Ɏ Ʀ", " ꝯ ꟾ 𝼓 𝼪 ꟕ ꬴ Ᶎ ɣ ꞑ", " ꜧ ꞵ ʨ Ʇ ꝥ 𝼘 ƹ Ȝ ȵ",
 		" ᴷ ᴿ ᴶ ᵀ ꟲ ⱽ ᶻ ᴬ ᴺ", " ᴰ ʳ ʲ ᵗ ᶜ ᵛ 𐞚 ᵃ ⁿ", " ᶝ 𐞨 𐞘 𐞯 ˤ ᶹ 𐞞 𐞃 ᶮ",
 		" ẅ ṽ u ṯ ṧ Ṝ Ǭ ṕ ṓ", " Ṿ ḕ ṻ Ṯ Ṧ ṝ ǭ Ṕ Ṓ", " ẖ ṿ Ṹ ṭ ṥ Ṟ Ƣ ṗ ṏ",
-		" Ɯ ᶌ ư ȶ Ʃ Ɍ ƣ ᵽ Ɵ", " Ʋ ơ Ʉ Ⱦ Ꞩ ɍ ǫ Ƿ Ơ", " ɦ Ʌ Ʊ Ŧ ʪ ʀ ȹ Ꝓ ɷ"
+		" Ɯ ᶌ ư ȶ Ʃ Ɍ ƣ ᵽ Ɵ", " Ʋ ơ Ʉ Ⱦ Ꞩ ɍ ǫ Ƿ Ơ", " ɦ Ʌ Ʊ Ŧ ʪ ʀ ȹ Ꝓ ɷ",
+		" Ɲ ɱ ɫ ƙ ʝ ɩ ʎ ƍ ƒ", " ɤ ɐ ȴ ʞ ʄ ı ʜ ǥ Ⅎ", " Ꜧ ᴟ ʟ Ꝅ ⱹ ǂ ʱ ꬶ ʇ",
+		" Ƞ Ⅿ ł Ⱪ ⱼ Ɨ ᴴ ᶃ ꜰ", " ⱴ Ꜵ ʫ 𝼃 𝼈 ɪ ʰ ʛ ⅎ", " ᶣ ᴹ Ƚ ⱪ 𝼋 ʅ ₕ 𝼁 ꞙ",
+		" Ɇ Ɗ ƈ ɓ ᶏ Ƶ Ɣ X w", " ⱱ ᴐ ʗ Ꝧ ⱥ ƺ ɏ ᶍ ʬ", " ꟸ Đ Ɔ ꝧ Ꜹ ᴣ Ꟛ Ꭓ ꝡ",
+		" ꭡ Ƌ Ƈ ꟓ ꜻ ʑ Ɤ ꭓ Ꝡ", " ꝟ ᶖ Ȼ 𝼅 Ꜳ ɀ ỿ ꭗ Ⱳ", " 𐞕 ƌ ȼ ꟔ ꜹ ʐ ꝩ ꭖ ꞷ",
+		" ꜷ ₘ ȸ ʋ ᶗ ↅ 𝼂 Ỽ ꞩ", " ↆ Ա ↁ Ⅴ 𝼏 𝼝 Ꞡ ꟒ Ꟊ", " 𐞖 ꭩ ꟈ Ꝟ Ç ç ᶢ ỽ ꟍ",
+		" Ｈ Ǆ ｈ ŧ ⱷ ᵇ ᵐ ϻ ꝓ", " ƚ ᴑ 𝼆 ꞁ 𝼛 Ｂ Ѧ ѩ ᴾ", " Ḣ ǲ ḥ Ꞁ ᵖ ｂ ѧ Ѩ ₚ"
 	].map(a => a.split(" "));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
 	}
 	function getTierPref(idx, tier) {
 		if (idx.gte("1000")) {
-			return (tier == 1 ? tierer2 : tierer)(idx, d => getTierPref(d, tier), d => getTierPref(d, tier + 1), ";", "1e3", true)
+			return (tier.eq("1") ? tierer2 : tierer)(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true)
 		}
-		switch (tier) {
+		switch (tier.toNumber()) {
 			case 0: {
 				console.error("??????");
 				break;
@@ -713,7 +719,7 @@ function occs(illion, c = false) {
 			case 5:
 				return `${r[18][rnd("2", 0, idx)]}${r[17][rnd("1", 0, idx)]}${r[16][rnd("0", 0, idx)]}`
 			case 8:
-				return `${r[27][rnd("2", 0, idx)]}${r[28][rnd("1", 0, idx)]}${r[29][rnd("0", 0, idx)]}`
+				return `${r[27][rnd("2", 0, idx)]}${r[26][rnd("1", 0, idx)]}${r[25][rnd("0", 0, idx)]}`
 			default:
 				return `${r[19 + (tier - 6) * 3][rnd("0", 0, idx)]}${r[20 + (tier - 6) * 3][rnd("1", 0, idx)]}${r[21 + (tier - 6) * 3][rnd("2", 0, idx)]}`
 		}
@@ -723,8 +729,12 @@ function occs(illion, c = false) {
 		return r[c ? 1 : 0][nm];
 	} else if (illion.lt("1e3")) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else if (illion.lt("(e^7)3000.47712125471966244")) {
+		return getTierPref(illion, new Decimal("1"))
 	} else {
-		return getTierPref(illion, 1)
+		// for optimization purposes so that we don't get to do 100 getTierPref's
+		let tierToUse = illion.slog("1e3").sub("2").floor(), tt = illion.iteratedlog("1e3", tierToUse.sub("1"));
+		return getTierPref(tt, tierToUse)
 	}
 }
 function abbrevN(n, func, config) {
@@ -917,7 +927,7 @@ return {
 	},
 	OneCharacterCrapStandard: {
 		name: "One character shit standard",
-		format: fmt(occs, {max: "(e^14)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
+		format: fmt(occs, {max: "(e^20)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
