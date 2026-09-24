@@ -1,3 +1,13 @@
+@font-face {
+  font-family: unifont;
+  src: url(https://the179ucetile.github.io/h/fonts/unifont-18.0.01.otf);
+  unicode-range: U+0-FFFF;
+}
+@font-face {
+  font-family: unifont;
+  src: url(https://the179ucetile.github.io/h/fonts/unifont_upper-18.0.01.otf);
+  unicode-range: U+10000-10FFFF;
+}
 html {
 	background-color: #000;
 	color: #fff;

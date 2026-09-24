@@ -5,6 +5,7 @@ function format(e) {
 	for (let i in BadNotations) {
 		let t = doesSupportTemporal ? Temporal.Now.instant() : performance.now();
 		let fmt = BadNotations[i].format(new Decimal(e));
+		if (i == "OneCharacterCrapStandard") fmt = `<span style="font-family:unifont">${fmt}</span>`;
 		output += `${BadNotations[i].name}: ${fmt}<br>\n`;
 		console.log(`${BadNotations[i].name}: ${fmt} (${doesSupportTemporal ? Temporal.Now.instant().since(t).total("milliseconds") : (performance.now() - t).toFixed(3)}ms)`)
 	}

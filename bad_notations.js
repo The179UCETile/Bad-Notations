@@ -1,6 +1,6 @@
 var BadNotations = (function () {
 
-function commasplitThing(num, base, lim) {
+function commasplitThing(num, base, lim, forceInteg = false) {
   num = new Decimal(num);
   base = new Decimal(base);
   const arr = [];
@@ -16,34 +16,43 @@ function commasplitThing(num, base, lim) {
 		};
     arr.push([man, log]);
     num2 = num2.sub(man.mul(base.pow(log)));
+		if (forceInteg) num2 = num2.floor();
   };
   return arr;
 }
-function tierer(num, cur, next, sep, base = "1e3") {
+function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false) {
 	if (num.lt(base)) return cur(num);
 	const arr = commasplitThing(num, base, 6);
 	const s = [];
+	let ii = 0;
 	for (let i of arr) {
 		if (i[1].eq("0")) {
       s.push(cur(i[0]));
 		} else {
-			s.push(`${i[0].gt("1") ? cur(i[0]) : ""}${next(i[1])}`);
-		}
+			s.push(`${i[0].gt("1") || (doNotUseBlankForOne && ii != 0) ? cur(i[0]) : ""}${next(i[1])}`);
+		};
+		ii++;
 	};
 	return s.join(sep);
 }
-function tierer2(num, cur, next, sep, base = "1e3") { // for tier 2 specifically
+function tierer2(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false) { // for tier 2 specifically
 	if (num.lt(base)) return cur(num);
 	const arr = commasplitThing(num, base, 6);
 	const s = [];
+	let ii = 0;
 	for (let i of arr) {
 		if (i[1].eq("0")) {
       s.push(cur(i[0], 1));
 		} else {
-			s.push(`${i[0].gt("1") ? cur(i[0], 1) : ""}${next(i[1])}`);
-		}
+			s.push(`${i[0].gt("1") || (doNotUseBlankForOne && ii != 0) ? cur(i[0], 1) : ""}${next(i[1])}`);
+		};
+		ii++;
 	};
 	return s.join(sep);
+}
+function removeTrailingZeros(str) {
+	if (!/\./.test(str)) return str;
+	return str.replace(/0+$/, "").replace(/\.$/, "");
 }
 function gbi(illion) {
 	const pref = {
@@ -121,7 +130,17 @@ function ptsprAbbreviate(n) {
 	}
 }
 function midNotationAbbreviate(n) {
-	const r = [" k M B T Qd Qn Sx Sp Oc No", " a' b' c' d' e' f' g' h' i' j'", " A' B' C' D' E' F' G' H' I' J'", " [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De", " Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt", "a b c d e f g h i j k l m n o p q r s t u v w x y z", "α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω"].map(a => a.split(" "));
+	n = new Decimal(n);
+	const r = [" k M B T Qd Qn Sx Sp Oc No",
+		" a' b' c' d' e' f' g' h' i' j'",
+		" A' B' C' D' E' F' G' H' I' J'",
+		" [rb]k [rb]M [rb]B [rb]T [rb]Qd [rb]Qn [rb]Sx [rb]Sp [rb]Oc [rb]De",
+		" Vt kVt MVt BVt TVt QdVt QnVt SxVt SpVt OcVt",
+		"a b c d e f g h i j k l m n o p q r s t u v w x y z",
+		"α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω",
+		" U D T Qd Qn Sx Sp Oc No",
+		" De Vt Tg qg Qg sg Sg Og Ng"
+	].map(a => a.split(" "));
 	if (Decimal.isNaN(n)) return "NaN";
 	if (n.eq("-Infinity")) return "-Infinity";
 	if (n.eq("Infinity")) return "Infinity";
@@ -130,7 +149,7 @@ function midNotationAbbreviate(n) {
 		return `-${midNotationAbbreviate(n.neg())}`
 	};
 	function rep(p, x, rev = false) {
-		return x == 0 ? "" : x == 1 ? p : rev ? `(${Math.floor(x)}^${p})` : `(${p}^${Math.floor(x)})`
+		return x == 0 ? "" : x == 1 ? p : rev ? `(${midNotationAbbreviate(Math.floor(x))}^${p})` : `(${p}^${midNotationAbbreviate(Math.floor(x))})`
 	}
 	function prefX(p, x, x2, t) {
 		let log = n.log10();
@@ -142,10 +161,10 @@ function midNotationAbbreviate(n) {
 	if (n.lt("1e-10")) {
 		return formatSci(n, 3)
 	} else if (n.lt("1")) {
-		return n.toPrecision(3)
+		return removeTrailingZeros(n.toPrecision(3))
 	} else if (n.lt("1e1000")) {
-		return `${mantissa} ${pref}`.trim()
-	} else if (n.lt("1e1e183")) {
+		return `${removeTrailingZeros(mantissa)} ${pref}`.trim()
+	} else if (n.lt("1e1e816")) {
 		let pre = `${prefX(r[4], "1e9", "1e12", 5)}${prefX(r[3], "1e7", "1e9", 4)}${prefX(r[2], "1e5", "1e7", 3)}${prefX(r[1], "1e3", "1e5", 2)}${pref}`.trim();
 		let loglog = n.log10().log10();
 		if (n.gte("1e9007199254740991")) pre = "";
@@ -160,18 +179,35 @@ function midNotationAbbreviate(n) {
 			if (!t6.join("+") == "") {
 				pre = `${t6.join("+")}|6 ${pre}`.trim();
 			}
-		}
-		if (n.gte("1e1e39")) {
+		};
+		if (n.gte("1e1e39") && n.lt("1e1e252")) {
 			let t7 = [];
-			for (let i = n.gte("1e1e57") ? loglog.div("3").floor().sub("5").mul("3") : new Decimal("39"); i.lte(loglog); i = i.add("3")) {
-				let t7pref = rep(r[6][i.sub("39").div("3").floor().toNumber()], n.log10().div(Decimal.pow("10", i)).mod("1000").floor().toNumber(), true);
+			for (let i = n.gte("1e1e57") ? loglog.div("3").floor().sub("5").mul("3").min("180") : new Decimal("39"); i.lte(loglog); i = i.add("3")) {
+				if (i.gt("180")) break;
+				let t7pref = rep(r[6][i.sub("39").div("3").floor().toNumber()], i.eq("180") ? n.log10().div("1e180").mod("1e36").floor().toNumber() : n.log10().div(Decimal.pow("10", i)).mod("1000").floor().toNumber(), true);
 				if (t7pref != "") {
 					t7.push(t7pref);
 				};
+				console.log(t7)
 			};
-			pre = `${t7.join("+")}|7 ${pre}`.trim();
+			if (!t7.join("+") == "") {
+				pre = `${t7.join("+")}|7 ${pre}`.trim();
+			}
+		};
+		if (n.gte("1e1e216")) {
+			let t8 = [];
+			for (let i = n.gte("1e1e234") ? loglog.div("6").floor().sub("2").mul("6") : new Decimal("216"); i.lte(loglog); i = i.add("6")) {
+				let t8prefIdx = i.sub("216").div("6").floor().toNumber();
+				let t8pref = rep(`${r[7][t8prefIdx % 10]}${r[8][Math.floor(t8prefIdx / 10) % 10]}Ce`, n.log10().div(Decimal.pow("10", i)).mod("1e6").floor().toNumber(), true);
+				if (t8pref != "") {
+					t8.push(t8pref);
+				};
+			};
+			if (!t8.join("+") == "") {
+				pre = `${t8.join("+")}|8 ${pre}`.trim();
+			}
 		}
-		return `${n.gte("1e1e39") ? "" : mantissa} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`.trim()
+		return `${n.gte("1e1e39") ? "" : removeTrailingZeros(mantissa)} ${pre.length >= 50 ? `${pre.slice(0, 47)}...` : pre}`.trim()
 	} else {
 		return formatSci(n);
 	}
@@ -634,7 +670,65 @@ function bcgiinas(illion, c = false) {
 		return tierer2(illion, bcgiinas, d => r[4][d.toNumber()], "")
 	}
 }
+function occs(illion, c = false) {
+	const r = [
+		"k m B t Q q s S O n", " U d T q Q S s o N", " D v ʈ Ɋ ɋ ș Ș ɵ ŋ", " C ð Ţ ƪ Ǫ ᶊ ᵴ Ø Ņ",
+		" M μ ɴ p f a z y r Ꝗ ʍ ɖ ƫ Ƭ P H h ø E", " ʍ ɖ ƫ Ƭ P h H ø E", " Ꝗ I ⱦ ᴛ ᴘ ⱨ Ⱨ Ꝋ e", " ɥ đ ƭ Ʈ ƥ ƕ Ƕ ʘ ɛ",
+		" K ᴍ g ᵵ ᶈ ᴇ Z Y R ꝗ Ꞌ Ƨ Ꜫ Ꜭ Ƽ Ƅ ʔ Ꞛ Ꝯ", " ꞌ ƨ ꜫ ꜭ ƽ ƅ ɂ ꞛ ꝰ", " ꝗ Ꝩ ꞎ Ꝭ Ꝑ Ꞓ Ᶎ Ɥ Ꞑ", " ɧ b Ꝥ ꝭ ꝑ ꞓ Ʒ Ỿ Ŋ",
+		" ĸ ᵯ ᵹ A l ɟ J Ȿ Ƀ ɠ ɢ ʂ V ᶆ Ƥ ᵷ ᶄ ɸ ꟼ", " ĸ ᵯ ᵹ A l ɟ J Ȿ Ƀ", " ɠ Ꟶ ʦ ƀ Ħ Ɱ Ᵹ Ƙ ɲ", " j ꬺ Ꝿ ɑ L ᵮ ᴊ ʃ ᴃ",
+		" F ꝳ ɒ ꭑ ȷ Ɉ ᴀ ᴤ ɶ", " ɳ i Ƒ Ḿ ᴁ ḿ ɉ ʆ æ", " ꟶ ᵬ ᶂ ṁ Æ Ṁ ɹ ɺ ᴂ",
+		" 𐌀 𐌰 𐍐 𐎀 𐎠 𐐀 𐑐 𐒀 𐤀", " 𐨐 𐎁 𐎡 𐐁 𐑑 𐒁 𐠀 𐔁 𐨑", " 𐨒 𐎂 𐎢 𐐂 𐑒 𐒂 𐠁 𐔂 𐨓",
+		" ɼ ᶀ Œ G Ƴ Ł Ɠ ꜳ Ꞗ", " ɨ Ṃ Ᵽ Ɓ W ꝿ ſ Ƃ ħ", " ɯ ƃ œ Ǥ ƴ Ɩ Ɡ Ꜷ ꞗ",
+		" Ə ꜵ ב Ꞵ c ɕ ɗ ᴆ ɘ", " ə ɚ Ǝ ɜ ɝ ɞ ⱸ ꬲ ꬳ", " ꞡ ʮ ʚ ʙ Ↄ ↄ ꝱ Ɑ Ɛ",
+		" ᴉ ɻ ꞣ ꝇ Ꝉ ᶇ ᴓ ꟊ Ꟍ", " ꞇ Ꞇ ᶑ ꟗ ʌ Ꝕ ᵺ ᵱ ḃ", " Ꟙ 𝼉 Ḃ ꟿ ꝃ ꟷ Ꟈ ꟁ Ꞔ",
+		" ᶬ W ꞔ Ꝁ ꝸ Ꟑ Ｍ ʯ ꞕ", " ꝛ Ꝛ Ꜩ ʧ ꝕ Ⱶ ⱶ ⱺ Ꝫ", " ꭃ Ꝺ þ ꝙ Ꝙ Ꝣ ꝣ Ꞝ Ꟗ",
+		" Ꝃ ｍ ꟑ ꝷ ƿ ɇ Ƹ Ɏ Ʀ", " ꝯ ꟾ 𝼓 𝼪 ꟕ ꬴ Ᶎ ɣ ꞑ", " ꜧ ꞵ ʨ Ʇ ꝥ 𝼘 ƹ Ȝ ȵ",
+		" ᴷ ᴿ ᴶ ᵀ ꟲ ⱽ ᶻ ᴬ ᴺ", " ᴰ ʳ ʲ ᵗ ᶜ ᵛ 𐞚 ᵃ ⁿ", " ᶝ 𐞨 𐞘 𐞯 ˤ ᶹ 𐞞 𐞃 ᶮ",
+		" ẅ ṽ u ṯ ṧ Ṝ Ǭ ṕ ṓ", " Ṿ ḕ ṻ Ṯ Ṧ ṝ ǭ Ṕ Ṓ", " ẖ ṿ Ṹ ṭ ṥ Ṟ Ƣ ṗ ṏ",
+		" Ɯ ᶌ ư ȶ Ʃ Ɍ ƣ ᵽ Ɵ", " Ʋ ơ Ʉ Ⱦ Ꞩ ɍ ǫ Ƿ Ơ", " ɦ Ʌ Ʊ Ŧ ʪ ʀ ȹ Ꝓ ɷ"
+	].map(a => a.split(" "));
+	function rnd(d, m = false, n = illion) {
+		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	function getTierPref(idx, tier) {
+		if (idx.gte("1000")) {
+			return (tier == 1 ? tierer2 : tierer)(idx, d => getTierPref(d, tier), d => getTierPref(d, tier + 1), ";", "1e3", true)
+		}
+		switch (tier) {
+			case 0: {
+				console.error("??????");
+				break;
+			}
+			case 1:
+				return occs(idx);
+			case 2:
+				if (idx.lt("20")) return r[4][idx.toNumber()];
+				return `${r[5][rnd("0", 0, idx)]}${r[6][rnd("1", 0, idx)]}${r[7][rnd("2", 0, idx)]}`
+			case 3:
+				if (idx.lt("20")) return r[8][idx.toNumber()];
+				return `${r[11][rnd("2", 0, idx)]}${r[10][rnd("1", 0, idx)]}${r[9][rnd("0", 0, idx)]}`
+			case 4:
+				if (idx.lt("20")) return r[12][idx.toNumber()];
+				return `${r[15][rnd("2", 0, idx)]}${r[14][rnd("1", 0, idx)]}${r[13][rnd("0", 0, idx)]}`
+			case 5:
+				return `${r[18][rnd("2", 0, idx)]}${r[17][rnd("1", 0, idx)]}${r[16][rnd("0", 0, idx)]}`
+			case 8:
+				return `${r[27][rnd("2", 0, idx)]}${r[28][rnd("1", 0, idx)]}${r[29][rnd("0", 0, idx)]}`
+			default:
+				return `${r[19 + (tier - 6) * 3][rnd("0", 0, idx)]}${r[20 + (tier - 6) * 3][rnd("1", 0, idx)]}${r[21 + (tier - 6) * 3][rnd("2", 0, idx)]}`
+		}
+	}
+	let nm = illion.toNumber();
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1e3")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else {
+		return getTierPref(illion, 1)
+	}
+}
 function abbrevN(n, func, config) {
+	n = new Decimal(n);
 	if (n.sign == -1) {
 		return `-${abbrevN(n.neg(), func, config)}`;
 	};
@@ -656,7 +750,7 @@ function abbrevN(n, func, config) {
 		decimals: 3,                            // Amount of decimals. Do not set this below 0 (or 3 if config.isPrecision is true).
 		min: "1e3",                             // Minimum number to use standard.
 		base: "1000",                           // The logarithm base to determine the illion number. Only used for Denutation.
-		fallbackNotation: formatSci,            // Fallback notation to use if max < number.
+		fallbackNotation: formatSci,            // Fallback notation to use if max < number. (fallbackNotation(num, decim))
 		removeMantissaMin: "1e9007199254740991" // Minimum number to omit the mantissa.
 	};
 	for (let i in defaults) {
@@ -668,38 +762,31 @@ function abbrevN(n, func, config) {
 	if (n.eq("Infinity")) { return "Infinity"; }
 	else if (n.eq("-Infinity")) { return "-Infinity"; }
 	else if (Decimal.isNaN(n)) { return "NaN"; }
+	else if (n.gte(config.max) || n.lt("1e-10")) { return config.fallbackNotation(n, Number(config.decimals)) }
 	else {};
 	let BASELOG = new Decimal(config.base).log10(), pref = n.lt(config.base) || n.gte(config.max) ? "" : func(n.log10().div(BASELOG).sub("1").floor());
 	if (n.lt("1")) {
-		if (n.lt("1e-10")) {
-			return config.fallbackNotation(n, config.decimals);
-		} else {
- 		 return n.toFixed(n.log10().neg().floor().add(config.decimals));
-		}
+ 		return n.toFixed(n.log10().neg().floor().add(config.decimals));
 	} else {
-		if (n.gte(config.max)) {
-			return config.fallbackNotation(n, Number(config.decimals));
+		if (n.lt(config.min)) {
+			let er2 = new Decimal("10").pow(Decimal.max("0", new Decimal(config.decimals).sub("1").sub(n.log10().floor())));
+			let mantissa2 = n.mul(er2).floor().div(er2);
+			return (config.isPrecision ? mantissa2 : n.mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals))).toNumber().toLocaleString("en-US");
 		} else {
-			if (n.lt(config.min)) {
-				let er2 = new Decimal("10").pow(Decimal.max("0", new Decimal(config.decimals).sub("1").sub(n.log10().floor())));
-				let mantissa2 = n.mul(er2).floor().div(er2);
-				return (config.isPrecision ? mantissa2 : n.mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals))).toNumber().toLocaleString("en-US");
+			let er = new Decimal("10").pow(new Decimal(config.decimals).sub(n.log10().floor().mod(BASELOG)));
+			let mantissa = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(er).floor().div(er);
+			// idk bro
+			let mantissaDisp = "";
+			if (config.isPrecision) {
+				mantissaDisp = mantissa.toString().slice(0, Number(config.decimals) + 1);
 			} else {
-				let er = new Decimal("10").pow(new Decimal(config.decimals).sub(n.log10().floor().mod(BASELOG)));
-				let mantissa = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(er).floor().div(er);
-				// idk bro
-				let mantissaDisp = "";
-				if (config.isPrecision) {
-					mantissaDisp = mantissa.toString().slice(0, Number(config.decimals) + 1);
-				} else {
-					mantissaDisp = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2);
-				};
-				if (/\./.test(mantissaDisp)) {
-					mantissaDisp = mantissaDisp.replace(/\.?0*$/, "");
-				};
-				let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
-				return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
-			}
+				mantissaDisp = new Decimal("10").pow(n.log10().mod(BASELOG)).mul(new Decimal("10").pow(config.decimals)).floor().div(new Decimal("10").pow(config.decimals)).toString().slice(0, n.log10().mod(BASELOG).floor().toNumber() + Number(config.decimals) + 2);
+			};
+			if (/\./.test(mantissaDisp)) {
+				mantissaDisp = mantissaDisp.replace(/\.?0*$/, "");
+			};
+			let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
+			return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${pref.length > config.maxChars ? config.truncLeft ? `...${pref.slice(pref.length - (config.maxChars - 3))}` : `${pref.slice(0, (config.maxChars - 3))}...` : pref}`.replace(new RegExp(sep + "$"), "");
 		}
 	}
 }
@@ -736,7 +823,7 @@ function pmn(n, config) {
 		return `-${pmn(n.neg(), config)}`
 	};
 	if (n.lt(config.tetraMin)) {
-		const arr = commasplitThing(n, config.base, config.maxEntries);
+		const arr = commasplitThing(n, config.base, config.maxEntries, true);
 		let s = "";
 		for (let i of arr) {
 			if (i[1].eq("0")) {
@@ -827,6 +914,10 @@ return {
 	BzukiConfusionGrammarIIsNotAreStandard: {
 		name: "Bzuki's confusion grammar i is not are standard",
 		format: fmt(bcgiinas, {max: "e3e27", decimals: 4})
+	},
+	OneCharacterCrapStandard: {
+		name: "One character shit standard",
+		format: fmt(occs, {max: "(e^14)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
