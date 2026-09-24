@@ -698,7 +698,8 @@ function occs(illion, c = false) {
 	}
 	function getTierPref(idx, tier) {
 		if (idx.gte("1000")) {
-			return (tier.eq("1") ? tierer2 : tierer)(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true)
+			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1e3", true)
+			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true)
 		}
 		switch (tier.toNumber()) {
 			case 0: {
