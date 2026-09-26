@@ -721,15 +721,40 @@ function occs(illion, c = false) {
 		" қ ℳ ⅁ 𝓽 𝚙 ϱ ź ꭅ ꭆ", " Ｑ ⁱ 𝔗 𝔱 𝛒 ȝ ℤ ҹ Ҋ", " њ ϐ 𝕋 𝕿 𝜌 ᶕ Ｚ ӌ Й",
 		" ҝ Җ ҁ ꬱ ꬹ ﬂ ǰ ﬅ ℬ", " 𝐺 ℏ 𝖙 𝼻 𝼲 𝽊 𝼰 𝼐 𝽍", " 𝽰 𝽌 𝽅 𝽀 ɭ 𝼀 𝽐 𝾕 𐞅",
 		" 𝽈 𝽋 ġ 𝼢 𝝆 𝽃 𝽦 𝼱 𝾔", " ꟴ 𝽝 𝼣 𝼤 𝞀 𝽄 ƻ 𝼹 𝽎", " 𝽆 Ḅ 𝼬 𝼯 𝞺 𝽜 ℥ 𝽕 𝽏",
-		" 𝽉 𝑀 Ǧ ꭁ ɮ ﬃ ꓩ 𝾖 ḇ", " Ġ ℎ 𝼸 ḅ ℍ 𝑚 ģ ҡ №", " 𐞼 𝑴"
+		" 𝽉 𝑀 Ǧ ꭁ ɮ ﬃ ꓩ 𝾖 ḇ", " Ġ ℎ 𝼸 ḅ ℍ 𝑚 ģ ҡ №", " 𐞼 𝑴  ǵ 𝽚 ⱡ Ϝ 𝽗 𝚦 Ḇ",
+		" ʊ 𝐵 𝽣 𝼴 𝑄 𝽢 ꟱ ↂ ӆ", " ʤ 𝽑 𝖳 𝑞 𝑸 ś Ş Ɒ ϰ", " ς ꝺ 𝗍 𝒒 𝒬 ŝ Š ↈ Ͷ",
+		" ԟ 𝓂 ǧ 𝗧 Ф 𝽨 ꭬ 𝼾 𝑏", " Ğ ꭂ 𝽛 𐞾 Ԅ ⅍ ԇ Ԥ ѯ", " ℰ ϗ ͼ ꭕ ℼ 𝜏 џ 𝜑 𝜒",
+		" 𝜓 𝓜 ǋ Ԇ Ӻ ҩ Ȥ Ӵ ꭙ", " ɰ ꟳ 𝘁 𐞥 𝓆 ѵ ȥ Ｙ ꭇ", " ҟ ʥ 𝘛 𝓠 𝓺 ѷ ⅀ ｙ ꭉ",
+		" ԅ Ѿ Ѝ ᴖ ﬄ 𝽁 Ź Ŷ Ŗ", " ǁ ǅ 𐞻 ᴗ ӻ ℨ ℶ ỵ Ԓ", " Ϡ ϖ Ͱ ᴕ ḟ 𝑩 𝒃 ӵ 𝐻",
+		" ԥ ʴ 𝽩 ℉ 𐞺 𐞽 Ṩ 𐞹 𐞀", " Ѓ ѓ Ӷ Ґ ґ Ｓ ｓ 𝽬 ή", " Ω 𝘵 𝙏 𝐹 𝑓 ṧ Ṥ ӛ Ӥ",
+		" 𝟏 𝟐 𝟑 𝟒 𝟓 𝟔 𝟕 𝟖 𝟗", " 𝟙 𝟚 𝟛 𝟜 𝟝 𝟞 𝟟 𝟠 𝟡", " 𝟣 𝟤 𝟥 𝟦 𝟧 𝟨 𝟩 𝟪 𝟫",
+		" 𝟭 𝟮 𝟯 𝟰 𝟱 𝟲 𝟳 𝟴 𝟵", " 𝟷 𝟸 𝟹 𝟺 𝟻 𝟼 𝟽 𝟾 𝟿", " 𝜕 𝜖 𝜗 𝜘 𝜙 𝜚 𝜛 𝝏 𝝐",
+		" 𝚷 𝚫 𝛕 𝛁 𝛗 𝙷 𝚑 𝛔 𝛆", " 𝛅 𝛊 𝝉 𝚪 𝛟 𝛈 𝜂 𝛉 𝛜", " 𝜼 𝛥 𝜞 𝝘 𝚽 𝝶 𝞰 𝝔 𝛏",
+		" ҫ Ԃ Ᲊ ᲊ ᴥ 𝽸 𝽤 𝽘 𝽭", " ᲈ 𝽱 𞀳 𞁧 ⅊ Ή 𝑯 ѹ 𝽂", " ℋ 𝼒 ᲆ Ꙥ ⅌ ԡ ℌ 𝼼 𝾁"
+	].map(a => a.split(/ /u));
+	const supertier2 = [
+		" 𝽺 𝼟 Ꙧ ꙥ ⅋ Ḩ ḧ ℴ ⅇ", " ↇ Ⅰ ℾ ᲄ ϕ Ḫ Ḧ Ȣ ᲀ", " ḩ ᵭ ꙧ Ꙣ Ꙉ 𝽇 ḫ ȣ ȩ", "𝔞 𝔟 𝔠 𝔡 𝔢 𝔣 𝔤 𝔥 𝔦 𝔧 𝔨 𝔩 𝔪 𝔫 𝔬 𝽖 𝔮 𝔯 𝔰 ꙣ 𝔲 𝔳 𝔴 𝔵 𝔶 𝔷",
+		" 𝼠 𝞃 Ꙟ Ꙋ ḣ 𝒉 𝽓 𞀷", " 𝼡 𝽯 𝙩 𝽮 Ɂ Ц 𝒽 Ю Ͼ", " 𝓗 𝼙 𝞽 𝚃 ʢ Ꙡ ꙡ 𝽲 ę"
 	].map(a => a.split(/ /u));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	function prefixify(tierPref, idx) {
+		idx = idx.floor();
+		if (idx.lte("0")) return "";
+		if (idx.eq("1")) return tierPref;
+		return `${idx.mod("10").neq("0") ? tierPref + supertier2[0][rnd("0", 0, idx)] : ""}${idx.mod("100").gte("10") ? tierPref + supertier2[1][rnd("1", 0, idx)] : ""}${idx.mod("1000").gte("100") ? tierPref + supertier2[2][rnd("2", 0, idx)] : ""}`
 	}
 	function getTierPref(idx, tier) {
 		if (idx.gte("1000")) {
 			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1e3", true)
 			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true)
+		}
+		if (tier.gte("56")) {
+			let tier2 = tier.sub("56").floor();
+			let tier3 = tier2.div("26").add("1").floor();
+			let pref = tier3.eq("1") ? "" : `${supertier2[4][rnd("0", 0, tier3)]}${supertier2[5][rnd("1", 0, tier3)]}${supertier2[6][rnd("2", 0, tier3)]}`;
+			return prefixify(tier.eq("109") ? "ℕ" : `${pref}${supertier2[3][tier2.mod("26").toNumber()]}`, idx)
 		}
 		switch (tier.toNumber()) {
 			case 0: {
@@ -958,7 +983,7 @@ return {
 	},
 	OneCharacterCrapStandard: {
 		name: "One character shit standard",
-		format: fmt(occs, {max: "(e^46)600.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
+		format: fmt(occs, {max: "(e^26030)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
