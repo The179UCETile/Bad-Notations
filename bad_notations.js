@@ -889,11 +889,11 @@ function defaultsObj(defaults, obj) {
 	return obj;
 }
 function pmn(n, config) {
-	n = new Decimal(n).floor();
+	n = new Decimal(n).mul("1000").round().div("1000").floor();
 	config = defaultsObj({
 		maxChars: 100,      // Maximum amount of characters before truncating.
 		maxEntries: 8,      // Maximum amount of entries.
-		tetraMin: "F6",     // Minimum number to use [x]y format
+		tetraIterMin: "6",  // Minimum amount of nestings before using [x]y format
 		base: "10"          // The multiplier between each parenthesis tier.
 	}, config);
 	if (Decimal.isNaN(n)) return "NaN";
@@ -903,7 +903,7 @@ function pmn(n, config) {
 	if (n.lt("0")) {
 		return `-${pmn(n.neg(), config)}`
 	};
-	if (n.lt(config.tetraMin)) {
+	if (n.lt(Decimal.tetrate(config.base, config.tetraIterMin))) {
 		const arr = commasplitThing(n, config.base, config.maxEntries, true);
 		let s = "";
 		for (let i of arr) {
