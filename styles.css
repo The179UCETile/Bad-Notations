@@ -6,14 +6,14 @@
 @font-face {
   font-family: unifont;
   src: url(https://the179ucetile.github.io/h/fonts/unifont_upper-18.0.01.otf);
-  unicode-range: U+10000-10FFFF;
+  unicode-range: U+10000-1D400, U+1D800-10FFFF; /* exclude mathematical alphanumeric symbols */
 }
 html {
 	background-color: #000;
 	color: #fff;
 }
 body {
-	font-family: sans-serif;
+	font-family: sans-serif, serif, unifont;
 }
 #num {
 	position: sticky;
