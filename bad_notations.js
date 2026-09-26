@@ -250,7 +250,7 @@ function ossn(illion, c = false) {
 	} else {
 		// use secondary notation????
 		let n = Decimal.pow("1e3", illion.add("1")).log10();
-		let mx = n.slog().sub("1.502198737548156").floor(); // slog_10(1.7976931348623157e308) - 1
+		let mx = n.slog().sub("1.502198737548156").floor().min("1.7976931348623157e308"); // slog_10(1.7976931348623157e308) - 1
 		function rr(num) {
 			return abbrevN(num, ossn, {separator: function(n) {
 				if (n.gte("1e33")) {
@@ -533,7 +533,7 @@ function cs(illion, c = false) {
 		}
 		return s.join(`∈${abbrevN(tier, cs, {separator: " "})}∋`);
 	} else {
-		return `~1⍍${abbrevN(illion.slog("1e3").floor().add("1"), cs, {separator: " "})}`;
+		return `~1⍍${abbrevN(illion.slog("1e3").floor().add("1").min("1.7976931348623157e308"), cs, {separator: " "})}`;
 	}
 }
 function nabn(illion, c = false) {
@@ -764,8 +764,8 @@ function occs(illion, c = false) {
 		if (tier.gte("56")) {
 			let tier2 = tier.sub("56").floor();
 			let tier3 = tier2.div("26").add("1").floor();
-			let pref = tier3.eq("1") ? "" : getT1ST2(tier3);
-			return prefixify(tier.eq("109") ? "ℕ" : `${pref}${supertier2[3][tier2.mod("26").toNumber()]}`, idx)
+			let pref = tier3.eq("1") ? "" : getT1ST2(tier3.min("1.7976931348623157e308"));
+			return prefixify(tier.eq("109") ? "ℕ" : `${pref}${supertier2[3][tier.gte("9e15") ? 0 : tier2.mod("26").toNumber()]}`, idx)
 		}
 		switch (tier.toNumber()) {
 			case 0: {
@@ -917,7 +917,7 @@ function pmn(n, config) {
 	} else if (n.lt("F9e15")) {
 		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(n.iteratedlog(config.base, n.slog(config.base).sub("2").floor()), config)}`
 	} else {
-		return `[${pmn(n.slog(config.base), config)}]1`
+		return `[${pmn(n.slog(config.base).min("1.7976931348623157e308"), config)}]1`
 	}
 }
 return {
