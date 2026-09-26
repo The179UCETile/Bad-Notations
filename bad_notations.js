@@ -661,7 +661,7 @@ function rcs(illion, c = false) {
 	}
 }
 function bcgiinas(illion, c = false) {
-	const r = ["t I L O Ad Ai Ex Ep Ct On", "N U L O Ad Ai Ex Ep Ct On", " Cd Gi Re Dr Dg Sx Sp Ot Gn", " Cc Dd Tt Qq Qc Ss Sc Fc Nc", " Il Mi Nl Pi Al Em Pt Yo Rt"].map(a => a.split(" "));
+	const r = ["t I L O Ad Ai Ex Ep Ct On", "U D L O Ad Ai Ex Ep Ct On", " Cd Gi Re Dr Dg Sx Sp Ot Gn", " Cc Dd Tt Qq Qc Ss Sc Fc Nc", " Il Mi Nl Pi Al Em Pt Yo Rt"].map(a => a.split(" "));
 	function rnd(d, m = false) {
 		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
 	}
