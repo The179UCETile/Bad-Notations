@@ -20,9 +20,9 @@ function commasplitThing(num, base, lim, forceInteg = false) {
   };
   return arr;
 }
-function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false) {
+function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false, max = 6) {
 	if (num.lt(base)) return cur(num);
-	const arr = commasplitThing(num, base, 6);
+	const arr = commasplitThing(num, base, max);
 	const s = [];
 	let ii = 0;
 	for (let i of arr) {
@@ -35,9 +35,9 @@ function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false) 
 	};
 	return s.join(sep);
 }
-function tierer2(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false) { // for tier 2 specifically
+function tierer2(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false, max = 6) { // for tier 2 specifically
 	if (num.lt(base)) return cur(num);
-	const arr = commasplitThing(num, base, 6);
+	const arr = commasplitThing(num, base, max);
 	const s = [];
 	let ii = 0;
 	for (let i of arr) {
@@ -747,8 +747,8 @@ function occs(illion, c = false) {
 	}
 	function getTierPref(idx, tier) {
 		if (idx.gte("1000")) {
-			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1e3", true)
-			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true)
+			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1e3", true, tier.gte("56") ? 3 : 6)
+			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true, tier.gte("56") ? 3 : 6)
 		}
 		if (tier.gte("56")) {
 			let tier2 = tier.sub("56").floor();
@@ -790,7 +790,7 @@ function occs(illion, c = false) {
 	} else {
 		// for optimization purposes so that we don't get to do 100 getTierPref's
 		let tierToUse = illion.slog("1e3").sub("2").floor();
-		if (tierToUse.gte("1000")) tierToUse = tierToUse.add("2").floor();
+		if (tierToUse.gte("1000")) tierToUse = tierToUse.add("1").floor();
 		let tt = illion.iteratedlog("1e3", tierToUse.sub("1"));
 		return getTierPref(tt, tierToUse)
 	}
