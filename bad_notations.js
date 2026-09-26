@@ -983,7 +983,7 @@ return {
 	},
 	OneCharacterCrapStandard: {
 		name: "One character shit standard",
-		format: fmt(occs, {max: "(e^26030)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
+		format: fmt(occs, {max: "(e^26003)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
