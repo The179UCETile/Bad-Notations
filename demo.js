@@ -11,8 +11,8 @@ function format(e) {
 	for (let i in BadNotations) {
 		if (i == "ParenthesesMagnitude") {
 			output += formatOne(i, e);
-			output += formatOne(i, e, {base: "2"}, "Parentheses magnitude notation (Base 2)");
-			output += formatOne(i, e, {base: "3"}, "Parentheses magnitude notation (Base 3)");
+			output += formatOne(i, e, {base: "2", tetraNests: "4"}, "Parentheses magnitude notation (Base 2)");
+			output += formatOne(i, e, {base: "3", tetraNests: "3"}, "Parentheses magnitude notation (Base 3)");
 			output += formatOne(i, e, {base: "1000"}, "Parentheses magnitude notation (Base 1,000)")
 		} else {
 			output += formatOne(i, e)

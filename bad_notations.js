@@ -894,7 +894,8 @@ function pmn(n, config) {
 		maxChars: 100,      // Maximum amount of characters before truncating.
 		maxEntries: 8,      // Maximum amount of entries.
 		tetraIterMin: "6",  // Minimum amount of nestings before using [x]y format
-		base: "10"          // The multiplier between each parenthesis tier.
+		base: "10",         // The multiplier between each parenthesis tier.
+		tetraNests: "2"     // Amount of nestings for numbers using [x]y format
 	}, config);
 	if (Decimal.isNaN(n)) return "NaN";
 	if (n.eq("-Infinity")) return "-Infinity";
@@ -915,7 +916,7 @@ function pmn(n, config) {
 		};
 		return s.length > config.maxChars ? `${s.slice(0, config.maxChars - 3)}...` : s;
 	} else if (n.lt("F9e15")) {
-		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(n.iteratedlog(config.base, n.slog(config.base).sub("2").floor()), config)}`
+		return `[${pmn(n.slog(config.base).sub(config.tetraNests), config)}]${pmn(n.iteratedlog(config.base, n.slog(config.base).sub(config.tetraNests).floor()), config)}`
 	} else {
 		return `[${pmn(n.slog(config.base).min("1.7976931348623157e308"), config)}]1`
 	}
