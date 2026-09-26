@@ -789,7 +789,9 @@ function occs(illion, c = false) {
 		return getTierPref(illion, new Decimal("1"))
 	} else {
 		// for optimization purposes so that we don't get to do 100 getTierPref's
-		let tierToUse = illion.slog("1e3").sub("2").floor(), tt = illion.iteratedlog("1e3", tierToUse.sub("1"));
+		let tierToUse = illion.slog("1e3").sub("2").floor();
+		if (tierToUse.gte("1000")) tierToUse = tierToUse.add("2").floor();
+		let tt = illion.iteratedlog("1e3", tierToUse.sub("1"));
 		return getTierPref(tt, tierToUse)
 	}
 }
