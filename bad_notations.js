@@ -734,7 +734,8 @@ function occs(illion, c = false) {
 	].map(a => a.split(/ /u));
 	const supertier2 = [
 		" 𝽺 𝼟 Ꙧ ꙥ ⅋ Ḩ ḧ ℴ ⅇ", " ↇ Ⅰ ℾ ᲄ ϕ Ḫ Ḧ Ȣ ᲀ", " ḩ ᵭ ꙧ Ꙣ Ꙉ 𝽇 ḫ ȣ ȩ", "𝔞 𝔟 𝔠 𝔡 𝔢 𝔣 𝔤 𝔥 𝔦 𝔧 𝔨 𝔩 𝔪 𝔫 𝔬 𝽖 𝔮 𝔯 𝔰 ꙣ 𝔲 𝔳 𝔴 𝔵 𝔶 𝔷",
-		" ꞟ 𝼠 𝞃 Ꙟ Ꙋ ḣ 𝒉 𝽓 𞀷", " 𝼡 𝽯 𝙩 𝽮 Ɂ Ц 𝒽 Ю Ͼ", " 𝓗 𝼙 𝞽 𝚃 ʢ Ꙡ ꙡ 𝽲 ę"
+		" ꞟ 𝼠 𝞃 Ꙟ Ꙋ ḣ 𝒉 𝽓 𞀷", " 𝼡 𝽯 𝙩 𝽮 Ɂ Ц 𝒽 Ю Ͼ", " 𝓗 𝼙 𝞽 𝚃 ʢ Ꙡ ꙡ 𝽲 ę",
+		" Ꜥ 𝼥 𝚝 𝞒 ˠ 𝕳 𝖍 𝼳 Ę", " ǆ ȋ ꙟ 𞁔 Ꜣ 𝖧 𝗁 𝽞 Ҿ 𝗛"
 	].map(a => a.split(/ /u));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
@@ -745,15 +746,25 @@ function occs(illion, c = false) {
 		if (idx.eq("1")) return tierPref;
 		return `${idx.mod("10").neq("0") ? tierPref + supertier2[0][rnd("0", 0, idx)] : ""}${idx.mod("100").gte("10") ? tierPref + supertier2[1][rnd("1", 0, idx)] : ""}${idx.mod("1000").gte("100") ? tierPref + supertier2[2][rnd("2", 0, idx)] : ""}`
 	}
+	function getT2ST2(idx) {
+			return `${supertier2[7][rnd("0", 0, idx)]}${supertier2[8][idx.div("10").floor().toNumber()]}`
+	}
+	function getT1ST2(idx) {
+		if (idx.lt("1000")) {
+			return `${supertier2[4][rnd("0", 0, idx)]}${supertier2[5][rnd("1", 0, idx)]}${supertier2[6][rnd("2", 0, idx)]}`
+		} else {
+			return tierer(idx, getT1ST2, getT2ST2, "?", "1000", true)
+		}
+	}
 	function getTierPref(idx, tier) {
 		if (idx.gte("1000")) {
-			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1e3", true, tier.gte("56") ? 3 : 6)
-			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1e3", true, tier.gte("56") ? 3 : 6)
+			if (tier.eq("1")) return tierer2(idx, occs, d => getTierPref(d, new Decimal("2")), ";", "1000", true, tier.gte("56") ? 3 : 6)
+			return tierer(idx, d => getTierPref(d, tier), d => getTierPref(d, tier.add("1").floor()), ";", "1000", true, tier.gte("56") ? 3 : 6)
 		}
 		if (tier.gte("56")) {
 			let tier2 = tier.sub("56").floor();
 			let tier3 = tier2.div("26").add("1").floor();
-			let pref = tier3.eq("1") ? "" : `${supertier2[4][rnd("0", 0, tier3)]}${supertier2[5][rnd("1", 0, tier3)]}${supertier2[6][rnd("2", 0, tier3)]}`;
+			let pref = tier3.eq("1") ? "" : getT1ST2(tier3);
 			return prefixify(tier.eq("109") ? "ℕ" : `${pref}${supertier2[3][tier2.mod("26").toNumber()]}`, idx)
 		}
 		switch (tier.toNumber()) {
@@ -787,12 +798,14 @@ function occs(illion, c = false) {
 		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
 	} else if (illion.lt("(e^7)3000.47712125471966244")) {
 		return getTierPref(illion, new Decimal("1"))
-	} else {
+	} else if (illion.lt("F9e15")) {
 		// for optimization purposes so that we don't get to do 100 getTierPref's
 		let tierToUse = illion.slog("1e3").sub("2").floor();
 		if (tierToUse.gte("1000")) tierToUse = tierToUse.add("1").floor();
 		let tt = illion.iteratedlog("1e3", tierToUse.sub("1"));
 		return getTierPref(tt, tierToUse)
+	} else {
+		return `~${getTierPref(new Decimal("1"), illion.slog("1e3").add("1").floor())}`
 	}
 }
 function abbrevN(n, func, config) {
@@ -901,8 +914,10 @@ function pmn(n, config) {
 			}
 		};
 		return s.length > config.maxChars ? `${s.slice(0, config.maxChars - 3)}...` : s;
-	} else {
+	} else if (n.lt("F9e15")) {
 		return `[${pmn(n.slog(config.base).sub("2"), config)}]${pmn(n.iteratedlog(config.base, n.slog(config.base).sub("2").floor()), config)}`
+	} else {
+		return `[${pmn(n.slog(config.base), config)}]1`
 	}
 }
 return {
@@ -981,11 +996,11 @@ return {
 	},
 	BzukiConfusionGrammarIIsNotAreStandard: {
 		name: "Bzuki's confusion grammar i is not are standard",
-		format: fmt(bcgiinas, {max: "e3e27", decimals: 4})
+		format: fmt(bcgiinas, {max: "e3e27", decimals: 2, isPrecision: false})
 	},
 	OneCharacterCrapStandard: {
 		name: "One character shit standard",
-		format: fmt(occs, {max: "(e^26030)3000.47712125471966244", decimals: 2, isPrecision: false, separator: " "})
+		format: fmt(occs, {decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
 		name: "Parentheses magnitude notation",
