@@ -1,24 +1,24 @@
 var BadNotations = (function () {
 
 function commasplitThing(num, base, lim, forceInteg = false) {
-  num = new Decimal(num);
-  base = new Decimal(base);
-  const arr = [];
-  let num2 = num;
-  if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
-  if (num.gte("e9e15")) lim = 1; // precision loss
-  while (arr.length < lim && num2.gt("0")) {
-    let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
+	num = new Decimal(num);
+	base = new Decimal(base);
+	const arr = [];
+	let num2 = num;
+	if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
+	if (num.gte("e9e15")) lim = 1; // precision loss
+	while (arr.length < lim && num2.gt("0")) {
+		let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
 		if (man.eq("0")) man = new Decimal("1");
 		if (man.gte(base)) {
 			log = log.add(man.log(base)).floor();
 			man = man.div(base.pow(man.log(base).floor())).floor();
 		};
-    arr.push([man, log]);
-    num2 = num2.sub(man.mul(base.pow(log)));
+		arr.push([man, log]);
+		num2 = num2.sub(man.mul(base.pow(log)));
 		if (forceInteg) num2 = num2.floor();
-  };
-  return arr;
+	};
+	return arr;
 }
 function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false, max = 6) {
 	if (num.lt(base)) return cur(num);
@@ -27,7 +27,7 @@ function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false, 
 	let ii = 0;
 	for (let i of arr) {
 		if (i[1].eq("0")) {
-      s.push(cur(i[0]));
+			s.push(cur(i[0]));
 		} else {
 			s.push(`${i[0].gt("1") || (doNotUseBlankForOne && ii != 0) ? cur(i[0]) : ""}${next(i[1])}`);
 		};
@@ -42,7 +42,7 @@ function tierer2(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false,
 	let ii = 0;
 	for (let i of arr) {
 		if (i[1].eq("0")) {
-      s.push(cur(i[0], 1));
+			s.push(cur(i[0], 1));
 		} else {
 			s.push(`${i[0].gt("1") || (doNotUseBlankForOne && ii != 0) ? cur(i[0], 1) : ""}${next(i[1])}`);
 		};
@@ -538,9 +538,9 @@ function cs(illion, c = false) {
 }
 function nabn(illion, c = false) {
 	const r = [
-    "k M B T Q q S s O N", " U d T Q q S s O N", " De Vi Ti Qag Qqg Sag Spg Ocg Nng", " Ce Dce Trce Qarge Qirge Sxrge Sprge Ocrge Norge",
-    " Mi Mcr Na Pc Fem Att Zpt Yct Xon Vec Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " ec Ic Trc Ttc Ptc Hxc Hpc Otc Enc", " Hec Dhc Thc Tthc Phc Hhc Hphc Ochc Ehc",
-    " Ki Meg Gig Ter Pt Ex Zet Yot Xen Dak", "By^2 By^Ki By^Meg By^Gig By^Ter By^Pt By^Ex By^Zet By^Yot By^Xen", " Dak Ik Trk Ttrk Ptk Hxk Hpk Otk Enk", " Hot Dhot Thot Tthot Pthot Hxhot Hphot Ochot Enhot",
+		"k M B T Q q S s O N", " U d T Q q S s O N", " De Vi Ti Qag Qqg Sag Spg Ocg Nng", " Ce Dce Trce Qarge Qirge Sxrge Sprge Ocrge Norge",
+		" Mi Mcr Na Pc Fem Att Zpt Yct Xon Vec Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " Mec Duec Trec Ttrec Ptec Hxec Hpec Ocec Enec", " ec Ic Trc Ttc Ptc Hxc Hpc Otc Enc", " Hec Dhc Thc Tthc Phc Hhc Hphc Ochc Ehc",
+		" Ki Meg Gig Ter Pt Ex Zet Yot Xen Dak", "By^2 By^Ki By^Meg By^Gig By^Ter By^Pt By^Ex By^Zet By^Yot By^Xen", " Dak Ik Trk Ttrk Ptk Hxk Hpk Otk Enk", " Hot Dhot Thot Tthot Pthot Hxhot Hphot Ochot Enhot",
 		" Kal Mj Gj Ast Lun Ferm Jov Sol Bet Gloc Gax Sup Vers Mult Pyr"
 	].map(a => a.split(" "));
 	function rnd(d, m = false, n = illion) {
@@ -599,13 +599,13 @@ function vdn(illion, c = false) {
 	let nm = illion.toNumber();
 	let td = Decimal.fromNumber;
 	function getT2(d) {
-    let st = "";
-    for (let i = 0; i < r[5].length; i++) {
-      if (d.div(2 ** i).floor().mod(2).eq(1)) {
-        st += r[5][i];
-      }
-    };
-    return st
+		let st = "";
+		for (let i = 0; i < r[5].length; i++) {
+			if (d.div(2 ** i).floor().mod(2).eq(1)) {
+				st += r[5][i];
+			}
+		};
+		return st
 	}
 	if (illion.lt("10")) {
 		return r[c ? 1 : 0][nm];
@@ -625,16 +625,16 @@ function rcs(illion, c = false) {
 	let nm = illion.toNumber();
 	let td = Decimal.fromNumber;
 	function x(d, func, sep) {
-    const st = [];
+		const st = [];
 		let highest = d.log(2).floor().max(0).add(1), highestR = d.log(2).floor().max(0), len = highestR.gte("1e9") ? 1 : highestR.gte("1e4") ? 5 : 10; // incase of precision loss
 		if (len == 1) return func(highestR);
-    for (let i = 0; i < len; i++) {
+		for (let i = 0; i < len; i++) {
 			let i2 = td(i).sub(len).add(highest).floor();
-      if (d.div(Decimal.pow(2, i2).floor()).floor().mod(2).eq(1)) {
-        st.push(func(i2.add(1).floor()));
-      }
-    };
-    return st.join(sep)
+			if (d.div(Decimal.pow(2, i2).floor()).floor().mod(2).eq(1)) {
+				st.push(func(i2.add(1).floor()));
+			}
+		};
+		return st.join(sep)
 	}
 	function getT3Sep(d) {
 		return `${r[9][rnd("0", 0, d)]}${r[10][rnd("1", 0, d)]}${r[11][rnd("2", 0, d)]}${r[12][rnd("3", 0, d)]}`;
