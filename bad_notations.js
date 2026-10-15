@@ -6,7 +6,7 @@ function commasplitThing(num, base, lim, forceInteg = false) {
 	const arr = [];
 	let num2 = num;
 	if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
-	if (num.gte("e9e15")) lim = 1; // precision loss
+	if (num.gte("e1e15")) lim = 1; // prevent precision loss
 	while (arr.length < lim && num2.gt("0")) {
 		let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
 		if (man.eq("0")) man = new Decimal("1");
@@ -808,6 +808,33 @@ function occs(illion, c = false) {
 		return `~${getTierPref(new Decimal("1"), illion.slog("1e3").add("1").floor())}`
 	}
 }
+function fbs(illion, c = false) {
+	const r = [
+		"k Ml Bl Tl qu Qu se Se Ot No",
+		" Ue Do Tc qu Qu se Se Ot No",
+		" Dc Vt Ti qi Qi si Si Oi Ni",
+		" Cn Du Tr qr Qr sl Sl Ol Nn",
+		" Mil Mic Nan Pic Fem Att Zep Yoc Xon Vec",
+		" Mec Mei Tri Tet Pen Hex Hep Oct Enn",
+		" Hec Doh Tir Tea Pea Hea Hpa Oca Ena",
+		" Kil Dki Tki Qak Qik Sxk Spk Oki Nki",
+		" Vee Vve Tve Qav Qiv Sxv Spv Ove Nve",
+		" Het Dhe The Qah Qih Sxh Sph Ohe Nhe", " Meg"
+	].map(a => a.split(" "));
+	function rnd(d, m = false) {
+		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1000")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else if (illion.lt("1000000")) {
+		return `${illion.div("1000").mod("100").floor().eq("10") ? r[4][10] : `${r[4][rnd("3")]}${r[5][rnd("4")]}`}${r[6][rnd("5")]}${fbs(illion.mod("1000"), 1)}`
+	} else {
+		return `${r[10][rnd("9")]}${r[7][rnd("6")]}${r[8][rnd("7")]}${r[9][rnd("8")]}${fbs(illion.mod("1000000"), 1)}`
+	}
+}
 function abbrevN(n, func, config) {
 	n = new Decimal(n);
 	if (n.sign == -1) {
@@ -815,7 +842,7 @@ function abbrevN(n, func, config) {
 	};
 	if (n.eq("0")) return "0";
 	let defaults = {
-		separator: "",							// Separator between the number and the prefix. (this can be a function)
+		separator: "",                           // Separator between the number and the prefix. (this can be a function)
 		/* function example
 		function(n) { // decimal (the current number)
 			if (n.gte("1e303")) {
@@ -824,15 +851,16 @@ function abbrevN(n, func, config) {
 			return ""
 		}
 		*/
-		truncLeft: false,                       // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
-		maxChars: 50,                           // Maximum amount of characters before truncating.
-		max: "Infinity",                        // Maximum number to use standard.
-		isPrecision: true,                      // If true, the number will use .toPrecision() instead of .toFixed().
-		decimals: 3,                            // Amount of decimals. Do not set this below 0 (or 3 if config.isPrecision is true).
-		min: "1e3",                             // Minimum number to use standard.
-		base: "1000",                           // The logarithm base to determine the illion number. Only used for Denutation.
-		fallbackNotation: formatSci,            // Fallback notation to use if max < number. (fallbackNotation(num, decim))
-		removeMantissaMin: "1e9007199254740991" // Minimum number to omit the mantissa.
+		truncLeft: false,                        // If true, truncate the prefix from the left of the prefix, otherwise truncate from the right.
+		maxChars: 50,                            // Maximum amount of characters before truncating.
+		max: "Infinity",                         // Maximum number to use standard.
+		isPrecision: true,                       // If true, the number will use .toPrecision() instead of .toFixed().
+		decimals: 3,                             // Amount of decimals. Do not set this below 0 (or 3 if config.isPrecision is true).
+		min: "1e3",                              // Minimum number to use standard.
+		base: "1000",                            // The logarithm base to determine the illion number. Only used for Denutation.
+		fallbackNotation: formatSci,             // Fallback notation to use if max < number. (fallbackNotation(num, decim))
+		removeMantissaMin: "1e9007199254740991", // Minimum number to omit the mantissa.
+		reversePrefix: false                     // Reverses the prefix. No idea who would use this for but it's necessary for fBAU's notation.
 	};
 	for (let i in defaults) {
 		config[i] = config[i] ?? defaults[i];
@@ -867,7 +895,12 @@ function abbrevN(n, func, config) {
 				mantissaDisp = mantissaDisp.replace(/\.?0*$/, "");
 			};
 			let sep = typeof config.separator == "function" ? config.separator(n) : config.separator;
-			return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${truncateString(pref, config.maxChars, config.truncLeft)}`.replace(new RegExp(sep + "$"), "");
+			let prefDisp = truncateString(pref, config.maxChars, config.truncLeft);
+			if (config.reversePrefix) {
+				return `${prefDisp}${n.gte(config.removeMantissaMin) ? "" : `${sep}${mantissaDisp}`}`.replace(new RegExp("^" + sep), "");
+			} else {
+				return `${n.gte(config.removeMantissaMin) ? "" : `${mantissaDisp}${sep}`}${prefDisp}`.replace(new RegExp(sep + "$"), "");
+			}
 		}
 	}
 }
@@ -1004,9 +1037,13 @@ return {
 		format: fmt(occs, {decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
-		name: "Parentheses magnitude notation",
+		name: "Parentheses magnitude",
 		format: pmn
-	}
+	},
+	FBAUStandard: {
+		name: "fBAU's standard",
+		format: fmt(fbs, {max: "e6000000003", decimals: 2, isPrecision: false, separator: " ", reversePrefix: true})
+	},
 }
 
 })()

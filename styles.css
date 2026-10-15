@@ -14,11 +14,66 @@ html {
 }
 body {
 	font-family: serif, unifont;
+	text-align: center;
+}
+#resultscontainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.notation {
+	padding: 0 16px 0 16px;
+	background-color: #002020;
+	border: 2px solid #004040;
+	margin-top: 12px;
+	transition: all 0.5s;
+}
+.notation:hover {
+	filter: brightness(150%);
+	transform: scale(110%);
 }
 #num {
+	font-family: serif, unifont;
 	position: sticky;
+	z-index: 999;
 	top: 10px;
 	border: 2px solid #fff;
 	background-color: #000;
 	color: #fff;
+}
+#explainations {
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100dvw;
+	height: 100dvh;
+	background-color: #00000080;
+}
+.explaination {
+	display: none;
+	padding: 4px 16px 4px 16px;
+	width: calc(100dvw - 80px);
+	max-height: calc(100dvh - 120px);
+	background-color: #002020;
+	border: 2px solid #004040;
+	overflow: auto;
+}
+#close {
+	margin-top: 20px;
+	padding: 4px 16px 4px 16px;
+	background-color: #800000;
+	border: 2px solid #ff0000;
+	font-size: 2em;
+	font-family: serif, unifont;
+	color: #fff;
+}
+.active {
+	display: block !important;
+}
+#explainations.active {
+	display: flex !important;
 }
