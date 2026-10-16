@@ -6,7 +6,7 @@ function commasplitThing(num, base, lim, forceInteg = false) {
 	const arr = [];
 	let num2 = num;
 	if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
-	if (num.gte("e1e15")) lim = 1; // prevent precision loss
+	if (num.gte("e1e12")) lim = 1; // prevent precision loss
 	while (arr.length < lim && num2.gt("0")) {
 		let log = num2.log(base).floor(), man = num2.div(base.pow(log)).floor();
 		if (man.eq("0")) man = new Decimal("1");
