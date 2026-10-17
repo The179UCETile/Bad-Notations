@@ -1126,6 +1126,7 @@ for (let i in notationsObject) {
 	notationsFuncArray.push(notationsObject[i].format);
 };
 function all(n, config) {
+	n = new Decimal(n);
 	config = defaultsObj({
 		notationsToUse: notationsFuncArray, // An Array containing the notation format functions.
 		slogLogDistance: "0.003",           // What should be the logarithmic super-logarithm distance between each notation?
