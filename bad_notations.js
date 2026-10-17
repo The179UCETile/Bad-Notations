@@ -547,7 +547,6 @@ function nabn(illion, c = false) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
 	}
 	let nm = illion.toNumber();
-	let td = Decimal.fromNumber;
 	function getT4(t4) {
 		return r[12][t4.toNumber()];
 	}
@@ -835,6 +834,75 @@ function fbs(illion, c = false) {
 		return `${r[10][rnd("9")]}${r[7][rnd("6")]}${r[8][rnd("7")]}${r[9][rnd("8")]}${fbs(illion.mod("1000000"), 1)}`
 	}
 }
+function fbsp2(illion, c = false) {
+	const r = [
+		"k Ml Bl Tl qu Qu se Se Ot No",
+		" Ue Do Tc qu Qu se Se Ot No",
+		" Dc Vt Ti qi Qi si Si Oi Ni",
+		" Cn Du Tr qr Qr sl Sl Ol Nn",
+		" Mil Mic Nan Pic Fem Att Zep Yoc Xon Vec",
+		" Mec Mei Tri Tet Pen Hex Hep Oct Enn",
+		" Hec Doh Tir Tea Pea Hea Hpa Oca Ena",
+		" Kil Dki Tki Qak Qik Sxk Spk Oki Nki",
+		" Vee Vve Tve Qav Qiv Sxv Spv Ove Nve",
+		" Het Dhe The Qah Qih Sxh Sph Ohe Nhe", " Meg"
+	].map(a => a.split(" "));
+	function rnd(d, m = false) {
+		return illion.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1000")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else if (illion.lt("1000000")) {
+		return `${fbsp2(illion.mod("1000"), 1)}${illion.div("1000").mod("100").floor().eq("10") ? r[4][10] : `${r[4][rnd("3")]}${r[5][rnd("4")]}`}${r[6][rnd("5")]}`
+	} else {
+		return `${fbsp2(illion.mod("1000000"), 1)}${r[7][rnd("6")]}${r[8][rnd("7")]}${r[9][rnd("8")]}${r[10][rnd("9")]}`
+	}
+}
+function fbsp3(illion, c = false) {
+	const r = [
+		"k Ml Bl Tl qu Qu se Se Ot No",
+		" Ue Do Tc qu Qu se Se Ot No",
+		" Dc Vt Ti qi Qi si Si Oi Ni",
+		" Cn Du Tr qr Qr sl Sl Ol Nn",
+		" Mil Mic Nan Pic Fem Att Zep Yoc Xon Vec",
+		" Mec Mei Tri Tet Pen Hex Hep Oct Enn",
+		" Hec Doh Tir Tea Pea Hea Hpa Oca Ena",
+		" Kil Dki Tki Qak Qik Sxk Spk Oki Nki",
+		" Vee Vve Tve Qav Qiv Sxv Spv Ove Nve",
+		" Het Dhe The Qah Qih Sxh Sph Ohe Nhe", " Meg"
+	].map(a => a.split(" "));
+	function rnd(d, m = false, n = illion) {
+		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
+	}
+	let nm = illion.toNumber();
+	function getT4(t4) {
+		return r[10][t4.toNumber()];
+	}
+	function getT3(t3) {
+		if (t3.lt("1e3")) {
+			return `${r[7][rnd("0", 0, t3)]}${r[8][rnd("1", 0, t3)]}${r[9][rnd("2", 0, t3)]}`;
+		} else {
+			return tierer(t3, getT3, getT4, "\"");
+		}
+	}
+	function getT2(t2) {
+		if (t2.lt("1e3")) {
+			return `${r[4][rnd(0, 0, t2)]}${t2.mod("100").eq("10") ? "Vec" : r[5][rnd(1, 0, t2)]}${r[6][rnd(2, 0, t2)]}`;
+		} else {
+			return tierer(t2, getT2, getT3, "'")
+		}
+	}
+	if (illion.lt("10")) {
+		return r[c ? 1 : 0][nm];
+	} else if (illion.lt("1e3")) {
+		return `${r[1][rnd("0")]}${r[2][rnd("1")]}${r[3][rnd("2")]}`;
+	} else {
+		return tierer2(illion, fbsp3, getT2, "-")
+	}
+}
 function abbrevN(n, func, config) {
 	n = new Decimal(n);
 	if (n.sign == -1) {
@@ -954,7 +1022,7 @@ function pmn(n, config) {
 		return `[${pmn(n.slog(config.base).min("1.7976931348623157e308"), config)}]1`
 	}
 }
-return {
+const notationsObject = {
 	GrandButtonIncrementalStandard: {
 		name: "Grand Button Incremental",
 		format: gbiAbbreviate
@@ -1040,10 +1108,55 @@ return {
 		name: "Parentheses magnitude",
 		format: pmn
 	},
-	FBAUStandard: {
-		name: "fBAU's standard",
+	FBAUStandardP1: {
+		name: "fBAU's standard (possibility 1)",
 		format: fmt(fbs, {max: "e6000000003", decimals: 2, isPrecision: false, separator: " ", reversePrefix: true})
 	},
+	FBAUStandardP2: {
+		name: "fBAU's standard (possibility 2)",
+		format: fmt(fbsp2, {max: "e6000000003", decimals: 2, isPrecision: false, separator: " ", reversePrefix: true})
+	},
+	FBAUStandardP3: {
+		name: "fBAU's standard (possibility 3)",
+		format: fmt(fbsp3, {max: "ee3e3000000", decimals: 2, isPrecision: false, separator: " ", reversePrefix: true})
+	}
+};
+const notationsFuncArray = [];
+for (let i in notationsObject) {
+	notationsFuncArray.push(notationsObject[i].format);
+};
+function all(n, config) {
+	config = defaultsObj({
+		notationsToUse: notationsFuncArray, // An Array containing the notation format functions.
+		slogLogDistance: "0.003",           // What should be the logarithmic super-logarithm distance between each notation?
+		random: true                        // Should the notations' order be random? Use this if you want the behavior to be the same as AD's ALL notation.
+	}, config);
+	if (Decimal.isNaN(n)) return "NaN";
+	if (n.eq("-Infinity")) return "-Infinity";
+	if (n.eq("Infinity")) return "Infinity";
+	let notation = Math.floor((config.notationsToUse.length - 1) / 2);
+	if (n.gt("1")) {
+		notation = n.slog().log10().div(config.slogLogDistance).floor().toNumber();
+		if (config.random) {
+			notation = Math.min(Math.floor(Math.abs(Math.cos(notation * Math.cos(notation))) * config.notationsToUse.length), config.notationsToUse.length - 1);
+		} else {
+			notation = notation % config.notationsToUse.length
+		}
+	};
+	if (n.lt("-1")) {
+		notation = n.abs().slog().log10().div(config.slogLogDistance).floor().toNumber();
+		if (config.random) {
+			notation = Math.min(Math.floor(Math.abs(Math.cos(notation * Math.cos(notation))) * config.notationsToUse.length), config.notationsToUse.length - 1);
+		} else {
+			notation = notation % config.notationsToUse.length
+		}
+	};
+	return config.notationsToUse[notation](n)
 }
+notationsObject.ALL = {
+	name: "ALL",
+	format: all
+};
+return notationsObject;
 
 })()
