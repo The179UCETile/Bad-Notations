@@ -20,6 +20,27 @@ function commasplitThing(num, base, lim, forceInteg = false) {
 	};
 	return arr;
 }
+function commasplitThing2(num, base, lim) {
+	num = new Decimal(num);
+	base = new Decimal(base);
+	const arr = [];
+	let num2 = num;
+	let initalLog = num2.log(base).floor();
+	if (num.lt("0")) return [[new Decimal(0), new Decimal(0)]];
+	if (num.gte("e1e12")) lim = 1; // prevent precision loss
+	while (arr.length < lim && initalLog.gte("0")) {
+		man = num2.div(base.pow(initalLog)).floor();
+		if (man.lt("0")) man = new Decimal("0");
+		if (man.gte(base)) {
+			initalLog = initalLog.add(man.log(base)).floor();
+			man = man.div(base.pow(man.log(base).floor())).floor();
+		};
+		arr.push([man, initalLog]);
+		num2 = num2.sub(man.mul(base.pow(initalLog))).floor();
+		initalLog = initalLog.sub("1").floor(); 
+	};
+	return arr;
+}
 function tierer(num, cur, next, sep, base = "1e3", doNotUseBlankForOne = false, max = 6) {
 	if (num.lt(base)) return cur(num);
 	const arr = commasplitThing(num, base, max);
@@ -370,36 +391,27 @@ function nvsn(illion, c = false) {
 		return tierer2(illion, nvsn, d => r[4][d.toNumber()], "")
 	}
 }
-function un(illion) {
-	if (illion.gte("10")) {
-		illion = illion.add("1")
-	};
+function dmn(illion) {
 	const r = ["K Myr Bry Tyr Teycr Pyr Hyr Hyi Oyr Eyr De Mcy Dcy Tycr Tetyrc Pncyr Hxycr Hpycr Ocycr Enycr", " De Iycr Tcycr Tetcycr Pcnycr Hcxycr Hpcycr Oycycr Encycr", " Hycr Dhycr Tchycr Tetchycr Pnhycr Hxhycr Hphycr Ochycr Enhycr", " Miy Biy Triy Qaiy Qiy Siy Spiy Oiy Niy Deiy Unyi Deiy Trei Quaiy Quiy Sxiy Spy Ocy Noy", " Deiy Viy Teyi Qugiy Qigy Segy Sepiy Ogey Nogiy", " Cey Ducey Trucey Qucey Quycey Secey Sepcey Occey Nocey", " Ryil Dyril Tyril Gyil Cyil Biyl Pyil Utyil Omyil", " Ril Oryil Yiyil Gyil Cyil Biyl Pyil Utyil Omyil", " Esyil Zesyil Phyil Gaill Nyill Syxyll Sepyill Dyryill Oymyill", " Tetryill Sypryill Dyrpyill Rypryill Nypryill Hypryill Hepryill Opryrill Lysryill", " Fyrly Dyrly Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Fyri Byri Tryly Qyrly Nyrly Syrly Xyrly Oyrly Eryly", " Zyrly Dyriy Tyriy Pyriy Nyriy Hyriy Syriy Oyriy Eyriy", " Heiyr Beiyr Teyir Peyir Heyir Syrly Hepyir Oyriry Nyriyr"].map(a => a.split(" "));
 	function rnd(d, m = false, n = illion) {
 		return n.div(new Decimal("10").pow(d)).floor().mod(m ? "1e3" : "10").toNumber();
 	}
-	let nm = illion.toNumber();
-	if (illion.lt("20")) {
-		return r[0][nm];
-	} else if (illion.lt("1e3")) {
-		let er = nm % 100 == 0 ? "" : nm % 100 < 20 ? `${r[0][nm % 100]}` : `${rnd("0") == 0 ? "" : r[0][rnd("0")]}${r[1][rnd("1")]}`;
-		return `${er}${r[2][rnd("2")]}`;
+	function getT2(t2) {
+		let t2id = t2;
+		t2 = t2.toNumber();
+		let t4 = t2 > 1e6 ? `${r[t2 > 1e7 ? 11 : 10][rnd(6, 0, t2id)]}${r[12][rnd(7, 0, t2id)]}${r[13][rnd(8, 0, t2id)]}'` : "";
+		return t2 < 20 ? `${(t2 % 100) == 10 ? "" : r[3][t2]}${r[4][rnd(1, 0, t2id)]}`: `${t4}${(t2 % 100) == 10 ? "" : r[3][rnd(0, rnd(1, 0, t2id) < 2, t2id) % 100]}${r[4][rnd(1, 0, t2id)]}${r[5][rnd(2, 0, t2id)]}${r[t2 > 1e4 ? 7 : 6][rnd(3, 0, t2id)]}${r[8][rnd(4, 0, t2id)]}${r[9][rnd(5, 0, t2id)]}`;
+	}
+	function getT1(idx) {
+		idx = idx.add(idx.add("90").div("100").floor());
+		if (idx.lt("20")) return r[0][idx.toNumber()];
+		let er = idx.mod("100").eq("0") ? "" : idx.mod("100").eq("0") ? `${r[0][idx.mod("100").toNumber()]}` : `${rnd("0", 0, idx) == 0 ? "" : r[0][rnd("0", 0, idx)]}${r[1][rnd("1", 0, idx)]}`;
+		return `${er}${r[2][rnd("2", 0, idx)]}`;
+	}
+	if (illion.lt("990")) {
+		return getT1(illion);
 	} else {
-		let l = illion.log10().div("3").floor().toNumber(), s = "";
-		let tier2ill = l, t2id = Decimal.fromNumber(tier2ill);
-		for (let i = 0; i < (l > 1e3 ? 1 : l > 6 ? 6 : (l + 1)); i++) {
-			let j = tier2ill * 3;
-			let t4 = tier2ill > 1e6 ? `${r[tier2ill > 1e7 ? 11 : 10][rnd(6, 0, t2id)]}${r[12][rnd(7, 0, t2id)]}${r[13][rnd(8, 0, t2id)]}'` : "";
-			let pref = tier2ill < 20 ? `${(tier2ill % 100) == 10 ? "" : r[3][tier2ill]}${r[4][rnd(1, 0, t2id)]}`: `${t4}${(tier2ill % 100) == 10 ? "" : r[3][rnd(0, rnd(1, 0, t2id) < 2, t2id) % 100]}${r[4][rnd(1, 0, t2id)]}${r[5][rnd(2, 0, t2id)]}${r[tier2ill > 1e4 ? 7 : 6][rnd(3, 0, t2id)]}${r[8][rnd(4, 0, t2id)]}${r[9][rnd(5, 0, t2id)]}`;
-			if (tier2ill >= 1) {
-				s += rnd(j.toString(), 1) != 0 ? `${rnd(j.toString(), 1) == 1 ? "" : un(Decimal.fromNumber(rnd(j.toString(), 1)))}${pref}` : ""
-			} else {
-				s += rnd("0", 1) == 0 ? "" : un(Decimal.fromNumber(rnd("0", 1)));
-			};
-			tier2ill--;
-			t2id = Decimal.fromNumber(tier2ill);
-		};
-		return s;
+		return tierer(illion, dmn, getT2, "", "990");
 	}
 }
 function ml(illion, c = false) {
@@ -1022,6 +1034,42 @@ function pmn(n, config) {
 		return `[${pmn(n.slog(config.base).min("1.7976931348623157e308"), config)}]1`
 	}
 }
+function tileeff(n, config) {
+	n = new Decimal(n);
+	config = defaultsObj({
+		html: true // Change this to false if you're outputting to innerText instead of innerHTML.
+	}, config);
+	function makeTileWithEff(filter, transform) {
+		return config.html ? `<span class="badnotations-tile" style="${filter ? `filter:${filter};` : ""}${transform ? `transform:${transform};` : ""}"></span>` : `[F:${filter}|T:${transform}]`
+	}
+	if (Decimal.isNaN(n)) return makeTileWithEff("grayscale(100%)", "skew(0deg, 15deg)");
+	if (n.eq("-Infinity")) return makeTileWithEff("grayscale(100%)", "skew(15deg)");
+	if (n.eq("Infinity")) return makeTileWithEff("grayscale(100%)", "skew(-15deg)");
+	if (n.eq("0")) return makeTileWithEff();
+	if (n.lt("0")) {
+		return `${makeTileWithEff("grayscale(100%)")}${tileeff(n.neg())}`
+	};
+	n = n.round();
+	if (n.lt("233280000")) {
+		return makeTileWithEff(
+			`hue-rotate(${n.mul("6").mod("360").toString()}deg) brightness(${n.div("60").floor().add("5").mod("10").add("5").mul("10").toString()}%) drop-shadow(0 0 ${n.div("23328000").floor().mod("10").mul("2").toString()}px #fff)`,
+			`rotate(${n.div("600").floor().div("30").mod("1").toString()}turn) scale(${n.div("18000").floor().add("3").mod("6").add("3").div("6").toString()}, ${n.div("108000").floor().add("3").mod("6").add("3").div("6").toString()}) skew(${n.div("648000").floor().add("3").mod("6").sub("3").div("6").mul("15").toString()}deg, ${n.div("3888000").floor().add("3").mod("6").sub("3").div("6").mul("15").toString()}deg)`
+		)
+	} else if (n.lt(Decimal.iteratedexp("233280000", "3", "3"))) {
+		const arr = commasplitThing2(n, "233280000", 3);
+		let s = "";
+		for (let i of arr) {
+			s += tileeff(i[0]);
+		};
+		if (n.gt(Decimal.pow("233280000", "3"))) {
+			s += `${makeTileWithEff("invert(1)", "scaleX(0.5) rotate(45deg)")}${tileeff(n.log("233280000").floor().sub("2"))}`
+		}
+		return s;
+	} else {
+		let iters = n.slog("233280000").sub("0.0570181930054763").floor();
+		return `${tileeff(iters.gte("1e12") ? "1" : n.iteratedlog("233280000", iters.sub("1")))}${makeTileWithEff("invert(1) hue-rotate(45deg)", "scaleY(0.5) rotate(45deg)")}${tileeff(iters)}`
+	}
+}
 const notationsObject = {
 	GrandButtonIncrementalStandard: {
 		name: "Grand Button Incremental",
@@ -1050,7 +1098,7 @@ const notationsObject = {
 	},
 	Diamond: {
 		name: "Diamond's notation",
-		format: fmt(un, {separator: " ", max: "1e3e3e9"})
+		format: fmt(dmn, {separator: " ", max: "1e1.8611325210981124e8986905584"})
 	},
 	MergingLegendsStandard: {
 		name: "Merging Legends",
@@ -1105,7 +1153,7 @@ const notationsObject = {
 		format: fmt(occs, {decimals: 2, isPrecision: false, separator: " "})
 	},
 	ParenthesesMagnitude: {
-		name: "Parentheses magnitude",
+		name: "Parentheses Magnitude",
 		format: pmn
 	},
 	FBAUStandardP1: {
@@ -1119,6 +1167,10 @@ const notationsObject = {
 	FBAUStandardP3: {
 		name: "fBAU's standard (possibility 3)",
 		format: fmt(fbsp3, {max: "ee3e3000000", decimals: 2, isPrecision: false, separator: " ", reversePrefix: true})
+	},
+	TileEffects: {
+		name: "Tile Effects",
+		format: tileeff
 	}
 };
 const notationsFuncArray = [];
@@ -1135,23 +1187,12 @@ function all(n, config) {
 	if (Decimal.isNaN(n)) return "NaN";
 	if (n.eq("-Infinity")) return "-Infinity";
 	if (n.eq("Infinity")) return "Infinity";
-	let notation = Math.floor((config.notationsToUse.length - 1) / 2);
-	if (n.gt("1")) {
-		notation = n.slog().log10().div(config.slogLogDistance).floor().toNumber();
-		if (config.random) {
-			notation = Math.min(Math.floor(Math.abs(Math.cos(notation * Math.cos(notation))) * config.notationsToUse.length), config.notationsToUse.length - 1);
-		} else {
-			notation = notation % config.notationsToUse.length
-		}
-	};
-	if (n.lt("-1")) {
-		notation = n.abs().slog().log10().div(config.slogLogDistance).floor().toNumber();
-		if (config.random) {
-			notation = Math.min(Math.floor(Math.abs(Math.cos(notation * Math.cos(notation))) * config.notationsToUse.length), config.notationsToUse.length - 1);
-		} else {
-			notation = notation % config.notationsToUse.length
-		}
-	};
+	let notation = n.abs().add("2").slog().log10().div(config.slogLogDistance).floor().toNumber();
+	if (config.random) {
+		notation = Math.min(Math.floor(Math.abs(Math.cos(notation * Math.cos(notation))) * config.notationsToUse.length), config.notationsToUse.length - 1);
+	} else {
+		notation = notation % config.notationsToUse.length
+	}
 	return config.notationsToUse[notation](n)
 }
 notationsObject.ALL = {
